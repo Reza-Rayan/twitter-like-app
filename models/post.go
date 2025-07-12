@@ -13,9 +13,7 @@ type Post struct {
 	UserID    int
 }
 
-var posts = []Post{}
-
-// Create New -> POST method
+// Save  New -> POST method
 func (p Post) Save() error {
 	query := `
 		INSERT INTO posts(title, content, created_at, user_id)
@@ -35,6 +33,24 @@ func (p Post) Save() error {
 
 	return err
 }
-func GetAllPosts() []Post {
-	return posts
+
+// GetAllPosts  -> Get method
+func GetAllPosts() ([]Post, error) {
+	query := "SELECT * FROM posts"
+
+	rows, err := db.DB.Query(query)
+
+	if err != nil {
+		return nil, err
+	}
+
+	defer rows.Close()
+
+	var posts []Post
+	for rows.Next() {
+		var post Post
+		rows.Scan(&post.ID, &post.Title, &post.CreatedAt, &post.UserID)
+		posts = append(posts, post)
+	}
+	return posts, nil
 }

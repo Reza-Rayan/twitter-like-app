@@ -20,7 +20,13 @@ func main() {
 }
 
 func allPosts(context *gin.Context) {
-	posts := models.GetAllPosts()
+	posts, err := models.GetAllPosts()
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{
+			"message": "fetch the get posts",
+			"error":   err.Error(),
+		})
+	}
 	context.JSON(http.StatusOK, gin.H{"message": "Get All Posts", "posts": posts})
 }
 
@@ -33,7 +39,7 @@ func createPost(context *gin.Context) {
 		})
 		return
 	}
-	post.UserID = 1 // static for now
+	post.UserID = 1 // static for now TODO: user _id should be selected after add user management
 	fmt.Println(post)
 	if err := post.Save(); err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{
