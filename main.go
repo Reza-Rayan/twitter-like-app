@@ -6,6 +6,7 @@ import (
 	"github.com/Reza-Rayan/twitter-like-app/models"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"strconv"
 )
 
 func main() {
@@ -14,7 +15,7 @@ func main() {
 
 	server.GET("/posts", allPosts)
 	server.POST("/posts", createPost)
-	//server.GET("/posts/:id", singlePost)
+	server.GET("/posts/:id", singlePost)
 
 	server.Run(":5050")
 
@@ -51,4 +52,28 @@ func createPost(context *gin.Context) {
 	}
 
 	context.JSON(http.StatusCreated, gin.H{"message": "Your Post Created", "post": post})
+}
+
+func singlePost(context *gin.Context) {
+	postId, err := strconv.ParseInt(context.Param("id"), 10, 64)
+	if err != nil {
+		context.JSON(http.StatusBadRequest, gin.H{
+			"message": "Invalid post id",
+			"error":   err.Error(),
+		})
+		return
+	}
+	post, err := models.GetPostByID(postId)
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{
+			"message": "Failed to save post",
+			"error":   err.Error(),
+		})
+		return
+	}
+	context.JSON(http.StatusOK, gin.H{
+		"message": "Find the post",
+		"post":    post,
+	})
+
 }

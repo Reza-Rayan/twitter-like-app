@@ -55,3 +55,17 @@ func GetAllPosts() ([]Post, error) {
 	}
 	return posts, nil
 }
+
+// GetPostByID -> Get method & find by id
+func GetPostByID(id int64) (*Post, error) {
+	query := "SELECT * FROM posts WHERE id=?"
+
+	row := db.DB.QueryRow(query, id)
+
+	var post Post
+	err := row.Scan(&post.ID, &post.Title, &post.Content, &post.CreatedAt, &post.UserID)
+	if err != nil {
+		return nil, err
+	}
+	return &post, err
+}
