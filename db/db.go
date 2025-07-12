@@ -15,22 +15,22 @@ func InitDB() {
 	if err != nil {
 		panic("Could not connect to db")
 	}
+
 	DB.SetMaxIdleConns(10)
 	DB.SetMaxOpenConns(5)
 
-	// Table
 	createTables()
 }
 
 func createTables() {
 	createPostsTable := `
-		CREATE TABLE IF NOT EXISTS posts (
-		    id INTEGER PRIMARY KEY AUTOINCREMENT,
-		    title TEXT NOT NULL,
-		    content TEXT NOT NULL,
-		    dateTime DATETIME NOT NULL,
-		    user_id INTEGER NOT NULL
-		);
+	CREATE TABLE IF NOT EXISTS posts (
+	    id INTEGER PRIMARY KEY AUTOINCREMENT,
+	    title TEXT NOT NULL,
+	    content TEXT NOT NULL,
+	    created_at DATETIME NOT NULL,
+	    user_id INTEGER NOT NULL
+	);
 	`
 
 	_, err := DB.Exec(createPostsTable)

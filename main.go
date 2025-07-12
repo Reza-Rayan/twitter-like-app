@@ -3,10 +3,9 @@ package main
 import (
 	"fmt"
 	"github.com/Reza-Rayan/twitter-like-app/db"
-	"net/http"
-
 	"github.com/Reza-Rayan/twitter-like-app/models"
 	"github.com/gin-gonic/gin"
+	"net/http"
 )
 
 func main() {
@@ -27,18 +26,22 @@ func allPosts(context *gin.Context) {
 
 func createPost(context *gin.Context) {
 	var post models.Post
-	err := context.ShouldBindJSON(&post)
-
-	if err != nil {
-		fmt.Println(err)
+	if err := context.ShouldBindJSON(&post); err != nil {
 		context.JSON(http.StatusBadRequest, gin.H{
 			"message": "Invalid request",
 			"error":   err.Error(),
 		})
 		return
 	}
+	post.UserID = 1 // static for now
+	fmt.Println(post)
+	if err := post.Save(); err != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{
+			"message": "Failed to save post",
+			"error":   err.Error(),
+		})
+		return
+	}
 
-	post.ID = 1
-	post.UserID = 1
 	context.JSON(http.StatusCreated, gin.H{"message": "Your Post Created", "post": post})
 }
