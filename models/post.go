@@ -16,7 +16,7 @@ type Post struct {
 // Save  New -> POST method
 func (p Post) Save() error {
 	query := `
-		INSERT INTO posts(id, title, content, created_at, user_id)
+		INSERT INTO posts(title, content, created_at, user_id)
 		VALUES(?, ?, ?, ?)
 		`
 	stmt, err := db.DB.Prepare(query)
