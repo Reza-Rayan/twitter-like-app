@@ -14,6 +14,7 @@ func main() {
 
 	server.GET("/posts", allPosts)
 	server.POST("/posts", createPost)
+	//server.GET("/posts/:id", singlePost)
 
 	server.Run(":5050")
 

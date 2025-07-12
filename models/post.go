@@ -16,7 +16,7 @@ type Post struct {
 // Save  New -> POST method
 func (p Post) Save() error {
 	query := `
-		INSERT INTO posts(title, content, created_at, user_id)
+		INSERT INTO posts(id, title, content, created_at, user_id)
 		VALUES(?, ?, ?, ?)
 		`
 	stmt, err := db.DB.Prepare(query)
@@ -39,17 +39,18 @@ func GetAllPosts() ([]Post, error) {
 	query := "SELECT * FROM posts"
 
 	rows, err := db.DB.Query(query)
-
 	if err != nil {
 		return nil, err
 	}
-
 	defer rows.Close()
 
 	var posts []Post
 	for rows.Next() {
 		var post Post
-		rows.Scan(&post.ID, &post.Title, &post.CreatedAt, &post.UserID)
+		err := rows.Scan(&post.ID, &post.Title, &post.Content, &post.CreatedAt, &post.UserID)
+		if err != nil {
+			return nil, err
+		}
 		posts = append(posts, post)
 	}
 	return posts, nil
