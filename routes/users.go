@@ -2,6 +2,7 @@ package routes
 
 import (
 	"github.com/Reza-Rayan/twitter-like-app/models"
+	"github.com/Reza-Rayan/twitter-like-app/utils"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -51,7 +52,18 @@ func login(context *gin.Context) {
 		})
 		return
 	}
+	token, err := utils.GenerateToken(user.Email, user.ID)
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{
+			"message": "Could not authorize this user",
+			"error":   err.Error(),
+		})
+		return
+	}
+
 	context.JSON(http.StatusOK, gin.H{
 		"message": "Logged in successfully",
+		"token":   token,
+		"user":    user,
 	})
 }
