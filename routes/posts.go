@@ -3,7 +3,6 @@ package routes
 import (
 	"fmt"
 	"github.com/Reza-Rayan/twitter-like-app/models"
-	"github.com/Reza-Rayan/twitter-like-app/utils"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
@@ -72,28 +71,7 @@ func singlePost(context *gin.Context) {
 
 // updatePost -> PUT method & find by id
 func updatePost(context *gin.Context) {
-	// Checking Authorization
-	token := context.GetHeader("Authorization")
-	if token == "" {
-		context.JSON(http.StatusUnauthorized, gin.H{
-			"message": "Authorization token required",
-		})
-		return
-	}
-	// Remove Bearer prefix if present
-	if len(token) > 7 && token[:7] == "Bearer " {
-		token = token[7:]
-	}
-
-	_, err := utils.VerifyToken(token)
-	if err != nil {
-		context.JSON(http.StatusUnauthorized, gin.H{
-			"message": "Invalid token",
-			"error":   err.Error(),
-		})
-		return
-	}
-	// End here
+	userId := context.GetInt64("userId")
 
 	postId, err := strconv.ParseInt(context.Param("id"), 10, 64)
 	if err != nil {
@@ -103,7 +81,13 @@ func updatePost(context *gin.Context) {
 		})
 		return
 	}
-	_, err = models.GetPostByID(postId)
+	post, err := models.GetPostByID(postId)
+	if post.UserID != userId {
+		context.JSON(http.StatusUnauthorized, gin.H{
+			"message": "You are not authorized to edit this post",
+		})
+		return
+	}
 	if err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{
 			"message": "Failed to save post",
@@ -134,28 +118,8 @@ func updatePost(context *gin.Context) {
 }
 
 func deletePost(context *gin.Context) {
-	// Checking Authorization
-	token := context.GetHeader("Authorization")
-	if token == "" {
-		context.JSON(http.StatusUnauthorized, gin.H{
-			"message": "Authorization token required",
-		})
-		return
-	}
-	// Remove Bearer prefix if present
-	if len(token) > 7 && token[:7] == "Bearer " {
-		token = token[7:]
-	}
 
-	_, err := utils.VerifyToken(token)
-	if err != nil {
-		context.JSON(http.StatusUnauthorized, gin.H{
-			"message": "Invalid token",
-			"error":   err.Error(),
-		})
-		return
-	}
-	// End here
+	userId := context.GetInt64("userId")
 
 	postId, err := strconv.ParseInt(context.Param("id"), 10, 64)
 	if err != nil {
@@ -165,7 +129,16 @@ func deletePost(context *gin.Context) {
 		})
 		return
 	}
+
 	post, err := models.GetPostByID(postId)
+
+	if post.UserID != userId {
+		context.JSON(http.StatusUnauthorized, gin.H{
+			"message": "You are not authorized to edit this post",
+		})
+		return
+	}
+
 	if err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{
 			"message": "Failed to get post",
