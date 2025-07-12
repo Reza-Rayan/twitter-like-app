@@ -23,18 +23,32 @@ func InitDB() {
 }
 
 func createTables() {
+	createUsersTable := `
+	CREATE TABLE IF NOT EXISTS users (
+    	id INTEGER PRIMARY KEY AUTOINCREMENT,
+    	email TEXT NOT NULL UNIQUE,
+    	password TEXT NOT NULL,
+    	username TEXT
+	);
+	`
+	_, err := DB.Exec(createUsersTable)
+	if err != nil {
+		panic(fmt.Sprintf("Could not create users table: %v", err))
+	}
+
 	createPostsTable := `
 	CREATE TABLE IF NOT EXISTS posts (
 	    id INTEGER PRIMARY KEY AUTOINCREMENT,
 	    title TEXT NOT NULL,
 	    content TEXT NOT NULL,
 	    created_at DATETIME NOT NULL,
-	    user_id INTEGER NOT NULL
+	    user_id INTEGER NOT NULL,
+	    FOREIGN KEY(user_id) REFERENCES users(id) 
 	);
 	`
 
-	_, err := DB.Exec(createPostsTable)
+	_, err = DB.Exec(createPostsTable)
 	if err != nil {
-		panic(fmt.Sprintf("Could not create table: %v", err))
+		panic(fmt.Sprintf("Could not create posts table: %v", err))
 	}
 }
