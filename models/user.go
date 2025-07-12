@@ -35,8 +35,7 @@ func (u User) Save() error {
 	return err
 }
 
-// ValidateCredentials  -> POST method
-
+// ValidateCredentials for login  -> POST method
 func (u User) ValidateCredentials() error {
 	query := `
 		SELECT  id, password FROM users WHERE email = ?
