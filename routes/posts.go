@@ -3,6 +3,7 @@ package routes
 import (
 	"fmt"
 	"github.com/Reza-Rayan/twitter-like-app/models"
+	"github.com/Reza-Rayan/twitter-like-app/utils"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
@@ -22,6 +23,29 @@ func allPosts(context *gin.Context) {
 
 // createPost -> POST method
 func createPost(context *gin.Context) {
+	token := context.GetHeader("Authorization")
+	if token == "" {
+		context.JSON(http.StatusUnauthorized, gin.H{
+			"message": "Authorization token required",
+		})
+		return
+	}
+	// Remove Bearer prefix if present
+	if len(token) > 7 && token[:7] == "Bearer " {
+		token = token[7:]
+	}
+
+	_, err := utils.VerifyToken(token)
+
+	userID, err := utils.VerifyToken(token)
+	if err != nil {
+		context.JSON(http.StatusUnauthorized, gin.H{
+			"message": "Invalid token",
+			"error":   err.Error(),
+		})
+		return
+	}
+
 	var post models.Post
 	if err := context.ShouldBindJSON(&post); err != nil {
 		context.JSON(http.StatusBadRequest, gin.H{
@@ -30,7 +54,7 @@ func createPost(context *gin.Context) {
 		})
 		return
 	}
-	post.UserID = 1 // static for now TODO: user _id should be selected after add user management
+	post.UserID = userID // static for now TODO: user _id should be selected after add user management
 	fmt.Println(post)
 	if err := post.Save(); err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{

@@ -36,9 +36,9 @@ func (u User) Save() error {
 }
 
 // ValidateCredentials for login  -> POST method
-func (u User) ValidateCredentials() error {
+func (u *User) ValidateCredentials() error {
 	query := `
-		SELECT  id, password FROM users WHERE email = ?
+		SELECT id, password FROM users WHERE email = ?
 	`
 	row := db.DB.QueryRow(query, u.Email)
 
@@ -47,8 +47,8 @@ func (u User) ValidateCredentials() error {
 	if err != nil {
 		return err
 	}
-	passwordIsValid := utils.CheckPasswordHash(u.Password, retrievedPassword)
 
+	passwordIsValid := utils.CheckPasswordHash(u.Password, retrievedPassword)
 	if !passwordIsValid {
 		return errors.New("Invalid password")
 	}
