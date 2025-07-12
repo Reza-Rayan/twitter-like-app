@@ -23,29 +23,7 @@ func allPosts(context *gin.Context) {
 
 // createPost -> POST method
 func createPost(context *gin.Context) {
-	token := context.GetHeader("Authorization")
-	if token == "" {
-		context.JSON(http.StatusUnauthorized, gin.H{
-			"message": "Authorization token required",
-		})
-		return
-	}
-	// Remove Bearer prefix if present
-	if len(token) > 7 && token[:7] == "Bearer " {
-		token = token[7:]
-	}
-
-	_, err := utils.VerifyToken(token)
-
-	userID, err := utils.VerifyToken(token)
-	if err != nil {
-		context.JSON(http.StatusUnauthorized, gin.H{
-			"message": "Invalid token",
-			"error":   err.Error(),
-		})
-		return
-	}
-
+	userId := context.GetInt64("userId")
 	var post models.Post
 	if err := context.ShouldBindJSON(&post); err != nil {
 		context.JSON(http.StatusBadRequest, gin.H{
@@ -54,7 +32,7 @@ func createPost(context *gin.Context) {
 		})
 		return
 	}
-	post.UserID = userID // static for now TODO: user _id should be selected after add user management
+	post.UserID = userId
 	fmt.Println(post)
 	if err := post.Save(); err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{
@@ -94,6 +72,29 @@ func singlePost(context *gin.Context) {
 
 // updatePost -> PUT method & find by id
 func updatePost(context *gin.Context) {
+	// Checking Authorization
+	token := context.GetHeader("Authorization")
+	if token == "" {
+		context.JSON(http.StatusUnauthorized, gin.H{
+			"message": "Authorization token required",
+		})
+		return
+	}
+	// Remove Bearer prefix if present
+	if len(token) > 7 && token[:7] == "Bearer " {
+		token = token[7:]
+	}
+
+	_, err := utils.VerifyToken(token)
+	if err != nil {
+		context.JSON(http.StatusUnauthorized, gin.H{
+			"message": "Invalid token",
+			"error":   err.Error(),
+		})
+		return
+	}
+	// End here
+
 	postId, err := strconv.ParseInt(context.Param("id"), 10, 64)
 	if err != nil {
 		context.JSON(http.StatusBadRequest, gin.H{
@@ -133,6 +134,29 @@ func updatePost(context *gin.Context) {
 }
 
 func deletePost(context *gin.Context) {
+	// Checking Authorization
+	token := context.GetHeader("Authorization")
+	if token == "" {
+		context.JSON(http.StatusUnauthorized, gin.H{
+			"message": "Authorization token required",
+		})
+		return
+	}
+	// Remove Bearer prefix if present
+	if len(token) > 7 && token[:7] == "Bearer " {
+		token = token[7:]
+	}
+
+	_, err := utils.VerifyToken(token)
+	if err != nil {
+		context.JSON(http.StatusUnauthorized, gin.H{
+			"message": "Invalid token",
+			"error":   err.Error(),
+		})
+		return
+	}
+	// End here
+
 	postId, err := strconv.ParseInt(context.Param("id"), 10, 64)
 	if err != nil {
 		context.JSON(http.StatusBadRequest, gin.H{
