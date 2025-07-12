@@ -10,7 +10,7 @@ type Post struct {
 	Title     string    `binding:"required"`
 	Content   string    `binding:"required"`
 	CreatedAt time.Time `binding:"required"`
-	UserID    int
+	UserID    int64
 }
 
 // Save  New -> POST method
@@ -68,4 +68,35 @@ func GetPostByID(id int64) (*Post, error) {
 		return nil, err
 	}
 	return &post, err
+}
+
+// Update -> PUT method & find by id
+func (post Post) Update() error {
+	query := `
+	UPDATE posts
+	SET title=?, content=?, user_id=?
+	WHERE id=?
+	`
+	stmt, err := db.DB.Prepare(query)
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	_, err = stmt.Exec(post.Title, post.Content, post.UserID, post.ID)
+	return err
+}
+
+// Delete -> DELETE method & find by id
+func (post Post) Delete() error {
+	query := "DELETE FROM posts WHERE id=?"
+	stmt, err := db.DB.Prepare(query)
+
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	_, err = stmt.Exec(post.ID)
+	return err
 }
