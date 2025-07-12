@@ -6,7 +6,7 @@ import (
 	"net/http"
 )
 
-// Save -> POST method
+// signup -> POST method
 func signup(context *gin.Context) {
 	var user models.User
 
@@ -29,5 +29,29 @@ func signup(context *gin.Context) {
 	context.JSON(http.StatusOK, gin.H{
 		"message": "User created successfully",
 		"user":    user,
+	})
+}
+
+// login -> POST method
+func login(context *gin.Context) {
+	var user models.User
+	err := context.ShouldBindJSON(&user)
+	if err != nil {
+		context.JSON(http.StatusBadRequest, gin.H{
+			"message": "Could not parse body",
+			"error":   err.Error(),
+		})
+		return
+	}
+	err = user.ValidateCredentials()
+	if err != nil {
+		context.JSON(http.StatusUnauthorized, gin.H{
+			"message": "Could not validate credentials",
+			"error":   err.Error(),
+		})
+		return
+	}
+	context.JSON(http.StatusOK, gin.H{
+		"message": "Logged in successfully",
 	})
 }

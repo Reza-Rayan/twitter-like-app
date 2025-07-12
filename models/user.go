@@ -1,6 +1,7 @@
 package models
 
 import (
+	"errors"
 	"github.com/Reza-Rayan/twitter-like-app/db"
 	"github.com/Reza-Rayan/twitter-like-app/utils"
 )
@@ -32,4 +33,25 @@ func (u User) Save() error {
 	userId, err := result.LastInsertId()
 	u.ID = userId
 	return err
+}
+
+// ValidateCredentials  -> POST method
+
+func (u User) ValidateCredentials() error {
+	query := `
+		SELECT  password FROM users WHERE email = ?
+	`
+	row := db.DB.QueryRow(query, u.Email)
+
+	var retrievedPassword string
+	err := row.Scan(&retrievedPassword)
+	if err != nil {
+		return err
+	}
+	passwordIsValid := utils.CheckPasswordHash(u.Password, retrievedPassword)
+
+	if !passwordIsValid {
+		return errors.New("Invalid password")
+	}
+	return nil
 }
