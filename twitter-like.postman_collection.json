@@ -1,0 +1,310 @@
+{
+	"info": {
+		"_postman_id": "11d89aa4-d734-4d9a-b489-2b3a49c799ba",
+		"name": "twitter-like",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "40136481"
+	},
+	"item": [
+		{
+			"name": "posts",
+			"item": [
+				{
+					"name": "single",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{web_url}}/{{version}}/posts/2",
+							"host": [
+								"{{web_url}}"
+							],
+							"path": [
+								"{{version}}",
+								"posts",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "index",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{web_url}}/{{version}}/posts",
+							"host": [
+								"{{web_url}}"
+							],
+							"path": [
+								"{{version}}",
+								"posts"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "store",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\":\"twitter app\",\n    \"content\":\"new application with learning GIN\",\n    \"CreatedAt\":\"2025-01-04T15:30:00.000Z\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{web_url}}/{{version}}/posts",
+							"host": [
+								"{{web_url}}"
+							],
+							"path": [
+								"{{version}}",
+								"posts"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\":\"twitter app updated\",\n    \"content\":\"new application with learning GIN\",\n    \"CreatedAt\":\"2025-01-04T15:30:00.000Z\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{web_url}}/{{version}}/posts/2",
+							"host": [
+								"{{web_url}}"
+							],
+							"path": [
+								"{{version}}",
+								"posts",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\":\"twitter app\",\n    \"content\":\"new application with learning GIN\",\n    \"CreatedAt\":\"2025-01-04T15:30:00.000Z\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{web_url}}/{{version}}/posts/2",
+							"host": [
+								"{{web_url}}"
+							],
+							"path": [
+								"{{version}}",
+								"posts",
+								"2"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "auth",
+			"item": [
+				{
+					"name": "Signup",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\":\"reza@gmail.com\",\n    \"password\":\"123456\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{web_url}}/{{version}}/signup",
+							"host": [
+								"{{web_url}}"
+							],
+							"path": [
+								"{{version}}",
+								"signup"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\":\"reza@gmail.com\",\n    \"password\":\"123456\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{web_url}}/{{version}}/login",
+							"host": [
+								"{{web_url}}"
+							],
+							"path": [
+								"{{version}}",
+								"login"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "follow",
+			"item": [
+				{
+					"name": "Follow",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{web_url}}/{{version}}/follow/2",
+							"host": [
+								"{{web_url}}"
+							],
+							"path": [
+								"{{version}}",
+								"follow",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Unfollow",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{web_url}}/{{version}}/unfollow/2",
+							"host": [
+								"{{web_url}}"
+							],
+							"path": [
+								"{{version}}",
+								"unfollow",
+								"2"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "profile",
+			"item": [
+				{
+					"name": "show",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{web_url}}/{{version}}/users/1",
+							"host": [
+								"{{web_url}}"
+							],
+							"path": [
+								"{{version}}",
+								"users",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "web_url",
+			"value": "http://localhost:5050",
+			"type": "string"
+		},
+		{
+			"key": "version",
+			"value": "1v",
+			"type": "string"
+		},
+		{
+			"key": "token",
+			"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InJlemFAZ21haWwuY29tIiwiZXhwIjoxNzUyNjQ1Mzg5LCJ1c2VySWQiOjF9.L_Z8gijWyAoVbi6nD4CqPw--baKezPHKJUJW3EPGPWs",
+			"type": "string"
+		}
+	]
+}
