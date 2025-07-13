@@ -51,4 +51,18 @@ func createTables() {
 	if err != nil {
 		panic(fmt.Sprintf("Could not create posts table: %v", err))
 	}
+
+	createFollowersTable := `
+	CREATE TABLE IF NOT EXISTS follows (
+		follower_id INTEGER NOT NULL,
+		followee_id INTEGER NOT NULL,
+		PRIMARY KEY (follower_id, followee_id),
+		FOREIGN KEY (follower_id) REFERENCES users(id),
+		FOREIGN KEY (followee_id) REFERENCES users(id)
+	);
+`
+	_, err = DB.Exec(createFollowersTable)
+	if err != nil {
+		panic(fmt.Sprintf("Could not create followers table: %v", err))
+	}
 }

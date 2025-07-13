@@ -117,6 +117,7 @@ func updatePost(context *gin.Context) {
 	context.JSON(http.StatusOK, gin.H{"message": "Update Post Was successfully", "post": updatedPost})
 }
 
+// deletePost -> DELETE method & find by id
 func deletePost(context *gin.Context) {
 
 	userId := context.GetInt64("userId")

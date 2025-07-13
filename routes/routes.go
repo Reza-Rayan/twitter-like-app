@@ -20,4 +20,8 @@ func RegisterRoutes(server *gin.Engine) {
 	//	Users Routes -> v1/register && v1/login
 	router.POST("/signup", signup)
 	router.POST("/login", login)
+
+	//	Follow Users -> v1/follow
+	authenticated.POST("/follow/:id", followUser)
+	authenticated.DELETE("/unfollow/:id", unfollowUser)
 }
