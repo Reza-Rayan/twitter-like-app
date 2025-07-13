@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+	"github.com/Reza-Rayan/twitter-like-app/config"
 	"github.com/Reza-Rayan/twitter-like-app/db"
 	"github.com/Reza-Rayan/twitter-like-app/routes"
 	"github.com/gin-gonic/gin"
@@ -8,10 +10,11 @@ import (
 
 func main() {
 	db.InitDB()
+	config.LoadConfig()
 	server := gin.Default()
-
 	routes.RegisterRoutes(server)
 
-	server.Run(":5050")
+	port := config.AppConfig.App.Port
+	server.Run(fmt.Sprintf(":%d", port))
 
 }
