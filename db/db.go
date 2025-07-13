@@ -3,21 +3,23 @@ package db
 import (
 	"database/sql"
 	"fmt"
-
+	"github.com/Reza-Rayan/twitter-like-app/config"
 	_ "github.com/mattn/go-sqlite3"
 )
 
 var DB *sql.DB
 
 func InitDB() {
+	cfg := config.AppConfig.Database
+
 	var err error
-	DB, err = sql.Open("sqlite3", "twitter.db")
+	DB, err = sql.Open(cfg.Driver, cfg.Name)
 	if err != nil {
-		panic("Could not connect to db")
+		panic(fmt.Sprintf("Could not connect to db: %v", err))
 	}
 
-	DB.SetMaxIdleConns(10)
-	DB.SetMaxOpenConns(5)
+	DB.SetMaxIdleConns(cfg.MaxIdleConns)
+	DB.SetMaxOpenConns(cfg.MaxOpenConns)
 
 	createTables()
 }

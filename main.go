@@ -9,8 +9,8 @@ import (
 )
 
 func main() {
-	db.InitDB()
 	config.LoadConfig()
+	db.InitDB()
 	server := gin.Default()
 	routes.RegisterRoutes(server)
 

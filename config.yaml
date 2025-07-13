@@ -2,3 +2,8 @@ app:
   name: TwitterClone
   port: 5050
   env: development
+database:
+  driver: "sqlite3"
+  name: "twitter.db"
+  max_idle_conns: 10
+  max_open_conns: 5

@@ -11,6 +11,13 @@ type Config struct {
 		Port int    `mapstructure:"port"`
 		Env  string `mapstructure:"env"`
 	} `mapstructure:"app"`
+
+	Database struct {
+		Driver       string `mapstructure:"driver"`
+		Name         string `mapstructure:"name"`
+		MaxIdleConns int    `mapstructure:"max_idle_conns"`
+		MaxOpenConns int    `mapstructure:"max_open_conns"`
+	} `mapstructure:"database"`
 }
 
 var AppConfig *Config
