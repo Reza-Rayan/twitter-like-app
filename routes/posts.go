@@ -5,7 +5,10 @@ import (
 	"github.com/Reza-Rayan/twitter-like-app/models"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"path/filepath"
 	"strconv"
+	"strings"
+	"time"
 )
 
 // allPosts -> GET method
@@ -23,16 +26,46 @@ func allPosts(context *gin.Context) {
 // createPost -> POST method
 func createPost(context *gin.Context) {
 	userId := context.GetInt64("userId")
-	var post models.Post
-	if err := context.ShouldBindJSON(&post); err != nil {
-		context.JSON(http.StatusBadRequest, gin.H{
-			"message": "Invalid request",
-			"error":   err.Error(),
-		})
-		return
+
+	// دریافت اطلاعات متنی
+	title := context.PostForm("title")
+	content := context.PostForm("content")
+
+	// دریافت فایل (optional)
+	file, err := context.FormFile("image")
+	var imagePath *string
+	if err == nil {
+		// اعتبارسنجی پسوند فایل (اختیاری ولی توصیه‌شده)
+		ext := strings.ToLower(filepath.Ext(file.Filename))
+		allowed := map[string]bool{".jpg": true, ".jpeg": true, ".png": true, ".webp": true}
+		if !allowed[ext] {
+			context.JSON(http.StatusBadRequest, gin.H{"error": "Invalid image type"})
+			return
+		}
+
+		// ساخت اسم یکتا
+		filename := fmt.Sprintf("%d_%s", time.Now().UnixNano(), file.Filename)
+		savePath := filepath.Join("uploads", filename)
+
+		// ذخیره فایل
+		if err := context.SaveUploadedFile(file, savePath); err != nil {
+			context.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to upload image"})
+			return
+		}
+
+		imagePathStr := "/uploads/" + filename
+		imagePath = &imagePathStr
 	}
-	post.UserID = userId
-	fmt.Println(post)
+
+	// ایجاد پست
+	post := models.Post{
+		Title:     title,
+		Content:   content,
+		UserID:    userId,
+		CreatedAt: time.Now(),
+		Image:     imagePath,
+	}
+
 	if err := post.Save(); err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{
 			"message": "Failed to save post",
