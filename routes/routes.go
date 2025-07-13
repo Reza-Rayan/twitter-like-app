@@ -24,4 +24,7 @@ func RegisterRoutes(server *gin.Engine) {
 	//	Follow Users -> v1/follow
 	authenticated.POST("/follow/:id", followUser)
 	authenticated.DELETE("/unfollow/:id", unfollowUser)
+
+	//	Profile v1/users
+	authenticated.GET("/profile", getUserProfile)
 }
