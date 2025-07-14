@@ -6,12 +6,12 @@ import (
 )
 
 type Post struct {
-	ID        int64     `json:"id"`
-	Title     string    `json:"title" binding:"required"`
-	Content   string    `json:"content" binding:"required"`
-	CreatedAt time.Time `json:"created_at"`
-	UserID    int64     `json:"user_id"`
-	Image     *string   `json:"image"`
+	ID        int64
+	Title     string    `binding:"required"`
+	Content   string    `binding:"required"`
+	CreatedAt time.Time `binding:"required"`
+	UserID    int64
+	Image     *string `json:"image,omitempty"`
 }
 
 // Save  New -> POST method
@@ -24,7 +24,6 @@ func (p Post) Save() error {
 	if err != nil {
 		return err
 	}
-	defer stmt.Close()
 	result, err := stmt.Exec(p.Title, p.Content, p.CreatedAt, p.UserID, p.Image)
 	if err != nil {
 		return err
@@ -64,7 +63,7 @@ func GetPostByID(id int64) (*Post, error) {
 	row := db.DB.QueryRow(query, id)
 
 	var post Post
-	err := row.Scan(&post.ID, &post.Title, &post.Content, &post.CreatedAt, &post.UserID)
+	err := row.Scan(&post.ID, &post.Title, &post.Content, &post.CreatedAt, &post.UserID, &post.Image)
 	if err != nil {
 		return nil, err
 	}
@@ -75,7 +74,7 @@ func GetPostByID(id int64) (*Post, error) {
 func (post Post) Update() error {
 	query := `
 	UPDATE posts
-	SET title=?, content=?, user_id=?
+	SET title=?, content=?, user_id=?, image=?
 	WHERE id=?
 	`
 	stmt, err := db.DB.Prepare(query)
@@ -84,7 +83,7 @@ func (post Post) Update() error {
 	}
 	defer stmt.Close()
 
-	_, err = stmt.Exec(post.Title, post.Content, post.UserID, post.ID)
+	_, err = stmt.Exec(post.Title, post.Content, post.UserID, post.Image, post.ID)
 	return err
 }
 

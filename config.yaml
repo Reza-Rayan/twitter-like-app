@@ -2,6 +2,7 @@ app:
   name: TwitterClone
   port: 5050
   env: development
+  base_url: http://localhost
 database:
   driver: "sqlite3"
   name: "twitter.db"

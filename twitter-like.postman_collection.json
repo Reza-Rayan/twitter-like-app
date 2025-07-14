@@ -15,14 +15,14 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{web_url}}/{{version}}/posts/2",
+							"raw": "{{web_url}}/{{version}}/posts/1",
 							"host": [
 								"{{web_url}}"
 							],
 							"path": [
 								"{{version}}",
 								"posts",
-								"2"
+								"1"
 							]
 						}
 					},
@@ -303,7 +303,7 @@
 		},
 		{
 			"key": "token",
-			"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InJlemFAZ21haWwuY29tIiwiZXhwIjoxNzUyNjQ1Mzg5LCJ1c2VySWQiOjF9.L_Z8gijWyAoVbi6nD4CqPw--baKezPHKJUJW3EPGPWs",
+			"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InJlemFAZ21haWwuY29tIiwiZXhwIjoxNzUyNzM1NjQ4LCJ1c2VySWQiOjF9._drnRxrmfsfPtBAcQI87lq_nSUdDh5F04aZ3O1crGco",
 			"type": "string"
 		}
 	]

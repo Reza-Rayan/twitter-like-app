@@ -3,11 +3,10 @@ package routes
 import (
 	"fmt"
 	"github.com/Reza-Rayan/twitter-like-app/models"
+	"github.com/Reza-Rayan/twitter-like-app/utils"
 	"github.com/gin-gonic/gin"
 	"net/http"
-	"path/filepath"
 	"strconv"
-	"strings"
 	"time"
 )
 
@@ -24,40 +23,29 @@ func allPosts(context *gin.Context) {
 }
 
 // createPost -> POST method
-func createPost(context *gin.Context) {
-	userId := context.GetInt64("userId")
+func createPost(c *gin.Context) {
+	userId := c.GetInt64("userId")
 
-	// دریافت اطلاعات متنی
-	title := context.PostForm("title")
-	content := context.PostForm("content")
+	title := c.PostForm("title")
+	content := c.PostForm("content")
 
-	// دریافت فایل (optional)
-	file, err := context.FormFile("image")
+	// handle image file
+	file, err := c.FormFile("image")
 	var imagePath *string
 	if err == nil {
-		// اعتبارسنجی پسوند فایل (اختیاری ولی توصیه‌شده)
-		ext := strings.ToLower(filepath.Ext(file.Filename))
-		allowed := map[string]bool{".jpg": true, ".jpeg": true, ".png": true, ".webp": true}
-		if !allowed[ext] {
-			context.JSON(http.StatusBadRequest, gin.H{"error": "Invalid image type"})
+		// Save file locally first
+		uploadRelativePath := fmt.Sprintf("uploads/posts/%d_%s", userId, file.Filename)
+		err = c.SaveUploadedFile(file, uploadRelativePath)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"message": "Failed to save image", "error": err.Error()})
 			return
 		}
 
-		// ساخت اسم یکتا
-		filename := fmt.Sprintf("%d_%s", time.Now().UnixNano(), file.Filename)
-		savePath := filepath.Join("uploads", filename)
-
-		// ذخیره فایل
-		if err := context.SaveUploadedFile(file, savePath); err != nil {
-			context.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to upload image"})
-			return
-		}
-
-		imagePathStr := "/uploads/" + filename
-		imagePath = &imagePathStr
+		// Build full URL with base url and port
+		fullImageURL := fmt.Sprintf("%s:%d/%s", utils.GetBaseURL(), utils.GetPort(), uploadRelativePath)
+		imagePath = &fullImageURL
 	}
 
-	// ایجاد پست
 	post := models.Post{
 		Title:     title,
 		Content:   content,
@@ -67,14 +55,11 @@ func createPost(context *gin.Context) {
 	}
 
 	if err := post.Save(); err != nil {
-		context.JSON(http.StatusInternalServerError, gin.H{
-			"message": "Failed to save post",
-			"error":   err.Error(),
-		})
+		c.JSON(http.StatusInternalServerError, gin.H{"message": "Failed to save post", "error": err.Error()})
 		return
 	}
 
-	context.JSON(http.StatusCreated, gin.H{"message": "Your Post Created", "post": post})
+	c.JSON(http.StatusCreated, gin.H{"message": "Post created", "post": post})
 }
 
 // singlePost -> Get method & find by id
@@ -108,46 +93,53 @@ func updatePost(context *gin.Context) {
 
 	postId, err := strconv.ParseInt(context.Param("id"), 10, 64)
 	if err != nil {
-		context.JSON(http.StatusBadRequest, gin.H{
-			"message": "Invalid post id",
-			"error":   err.Error(),
-		})
+		context.JSON(http.StatusBadRequest, gin.H{"message": "Invalid post id", "error": err.Error()})
 		return
 	}
-	post, err := models.GetPostByID(postId)
-	if post.UserID != userId {
-		context.JSON(http.StatusUnauthorized, gin.H{
-			"message": "You are not authorized to edit this post",
-		})
-		return
-	}
-	if err != nil {
-		context.JSON(http.StatusInternalServerError, gin.H{
-			"message": "Failed to save post",
-			"error":   err.Error(),
-		})
-		return
-	}
-	var updatedPost models.Post
-	err = context.ShouldBindJSON(&updatedPost)
-	if err != nil {
-		context.JSON(http.StatusBadRequest, gin.H{
-			"message": "Invalid request",
-			"error":   err.Error(),
-		})
-		return
-	}
-	updatedPost.ID = postId
 
-	err = updatedPost.Update()
+	post, err := models.GetPostByID(postId)
 	if err != nil {
-		context.JSON(http.StatusInternalServerError, gin.H{
-			"message": "Failed to save post",
-			"error":   err.Error(),
-		})
+		context.JSON(http.StatusInternalServerError, gin.H{"message": "Failed to get post", "error": err.Error()})
 		return
 	}
-	context.JSON(http.StatusOK, gin.H{"message": "Update Post Was successfully", "post": updatedPost})
+
+	if post.UserID != userId {
+		context.JSON(http.StatusUnauthorized, gin.H{"message": "You are not authorized to edit this post"})
+		return
+	}
+
+	// Read updated values from multipart/form-data
+	title := context.PostForm("title")
+	content := context.PostForm("content")
+
+	if title != "" {
+		post.Title = title
+	}
+	if content != "" {
+		post.Content = content
+	}
+
+	// Optional: Handle new image upload
+	file, err := context.FormFile("image")
+	if err == nil {
+		uploadRelativePath := fmt.Sprintf("uploads/posts/%d_%s", userId, file.Filename)
+		err = context.SaveUploadedFile(file, uploadRelativePath)
+		if err != nil {
+			context.JSON(http.StatusInternalServerError, gin.H{"message": "Failed to save image", "error": err.Error()})
+			return
+		}
+
+		fullImageURL := fmt.Sprintf("%s:%d/%s", utils.GetBaseURL(), utils.GetPort(), uploadRelativePath)
+		post.Image = &fullImageURL
+	}
+
+	err = post.Update()
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"message": "Failed to update post", "error": err.Error()})
+		return
+	}
+
+	context.JSON(http.StatusOK, gin.H{"message": "Post updated successfully", "post": post})
 }
 
 // deletePost -> DELETE method & find by id
