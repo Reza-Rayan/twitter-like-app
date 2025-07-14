@@ -336,6 +336,29 @@
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "notifications",
+			"item": [
+				{
+					"name": "Get Notifications",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{web_url}}/{{version}}/notifications",
+							"host": [
+								"{{web_url}}"
+							],
+							"path": [
+								"{{version}}",
+								"notifications"
+							]
+						}
+					},
+					"response": []
+				}
+			]
 		}
 	],
 	"auth": {
@@ -383,7 +406,7 @@
 		},
 		{
 			"key": "token",
-			"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InJlemFAZ21haWwuY29tIiwiZXhwIjoxNzUyNzQzNjczLCJ1c2VySWQiOjF9.F63l6rzDPYfUSaLW6cm624G32wnLtUBUaL_GVG0aK_Y",
+			"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im1vaHNlbkBnbWFpbC5jb20iLCJleHAiOjE3NTI3NTk3MjYsInVzZXJJZCI6Mn0.JYGJnxogYrdlXk91U_vXfgp50OrIPJhWwOSF2oOjcFU",
 			"type": "string"
 		}
 	]
