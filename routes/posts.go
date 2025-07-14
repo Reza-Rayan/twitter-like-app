@@ -65,6 +65,20 @@ func createPost(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"message": "Failed to save post", "error": err.Error()})
 		return
 	}
+	followers, err := models.GetFollowers(userId)
+
+	if err == nil {
+		for _, follower := range followers {
+			notification := models.Notification{
+				RecipientID: follower.ID,
+				SenderID:    userId,
+				Type:        "new_post",
+				PostID:      &post.ID,
+				Message:     fmt.Sprintf("User %s created a new post", post.Title),
+			}
+			_ = notification.Save()
+		}
+	}
 
 	c.JSON(http.StatusCreated, gin.H{"message": "Post created", "post": post})
 }
