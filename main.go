@@ -14,6 +14,8 @@ func main() {
 	server := gin.Default()
 	routes.RegisterRoutes(server)
 
+	server.Static("/uploads", "./uploads") // Serve files in the uploads folder at /uploads URL path
+
 	port := config.AppConfig.App.Port
 	server.Run(fmt.Sprintf(":%d", port))
 

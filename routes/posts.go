@@ -3,9 +3,11 @@ package routes
 import (
 	"fmt"
 	"github.com/Reza-Rayan/twitter-like-app/models"
+	"github.com/Reza-Rayan/twitter-like-app/utils"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
+	"time"
 )
 
 // allPosts -> GET method
@@ -21,27 +23,43 @@ func allPosts(context *gin.Context) {
 }
 
 // createPost -> POST method
-func createPost(context *gin.Context) {
-	userId := context.GetInt64("userId")
-	var post models.Post
-	if err := context.ShouldBindJSON(&post); err != nil {
-		context.JSON(http.StatusBadRequest, gin.H{
-			"message": "Invalid request",
-			"error":   err.Error(),
-		})
-		return
+func createPost(c *gin.Context) {
+	userId := c.GetInt64("userId")
+
+	title := c.PostForm("title")
+	content := c.PostForm("content")
+
+	// handle image file
+	file, err := c.FormFile("image")
+	var imagePath *string
+	if err == nil {
+		// Save file locally first
+		uploadRelativePath := fmt.Sprintf("uploads/posts/%d_%s", userId, file.Filename)
+		err = c.SaveUploadedFile(file, uploadRelativePath)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"message": "Failed to save image", "error": err.Error()})
+			return
+		}
+
+		// Build full URL with base url and port
+		fullImageURL := fmt.Sprintf("%s:%d/%s", utils.GetBaseURL(), utils.GetPort(), uploadRelativePath)
+		imagePath = &fullImageURL
 	}
-	post.UserID = userId
-	fmt.Println(post)
+
+	post := models.Post{
+		Title:     title,
+		Content:   content,
+		UserID:    userId,
+		CreatedAt: time.Now(),
+		Image:     imagePath,
+	}
+
 	if err := post.Save(); err != nil {
-		context.JSON(http.StatusInternalServerError, gin.H{
-			"message": "Failed to save post",
-			"error":   err.Error(),
-		})
+		c.JSON(http.StatusInternalServerError, gin.H{"message": "Failed to save post", "error": err.Error()})
 		return
 	}
 
-	context.JSON(http.StatusCreated, gin.H{"message": "Your Post Created", "post": post})
+	c.JSON(http.StatusCreated, gin.H{"message": "Post created", "post": post})
 }
 
 // singlePost -> Get method & find by id

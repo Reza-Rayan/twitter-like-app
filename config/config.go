@@ -7,9 +7,10 @@ import (
 
 type Config struct {
 	App struct {
-		Name string `mapstructure:"name"`
-		Port int    `mapstructure:"port"`
-		Env  string `mapstructure:"env"`
+		Name    string `mapstructure:"name"`
+		Port    int    `mapstructure:"port"`
+		Env     string `mapstructure:"env"`
+		BaseURL string `mapstructure:"base_url"`
 	} `mapstructure:"app"`
 
 	Database struct {
