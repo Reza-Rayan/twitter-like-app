@@ -69,4 +69,24 @@ func createTables() {
 	if err != nil {
 		panic(fmt.Sprintf("Could not create followers table: %v", err))
 	}
+
+	createNotificationsTable := `
+	CREATE TABLE IF NOT EXISTS notifications (
+		id INTEGER PRIMARY KEY AUTOINCREMENT,
+		recipient_id INTEGER NOT NULL,
+		sender_id INTEGER NOT NULL,
+		type TEXT NOT NULL,
+		post_id INTEGER,
+		message TEXT,
+		created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+		is_read BOOLEAN DEFAULT 0,
+		FOREIGN KEY (recipient_id) REFERENCES users(id),
+		FOREIGN KEY (sender_id) REFERENCES users(id),
+		FOREIGN KEY (post_id) REFERENCES posts(id)
+	);
+	`
+	_, err = DB.Exec(createNotificationsTable)
+	if err != nil {
+		panic(fmt.Sprintf("Could not create notifications table: %v", err))
+	}
 }

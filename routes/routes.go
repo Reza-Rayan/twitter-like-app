@@ -29,4 +29,7 @@ func RegisterRoutes(server *gin.Engine) {
 	authenticated.GET("/profile", getUserProfile)
 	authenticated.PATCH("/profile/update-avatar", updateAvatar)
 	authenticated.PUT("profile", updateUserProfile)
+
+	//	Notifications
+	authenticated.GET("/notifications", getUserNotifications)
 }
