@@ -27,4 +27,5 @@ func RegisterRoutes(server *gin.Engine) {
 
 	//	Profile v1/users
 	authenticated.GET("/profile", getUserProfile)
+	authenticated.PATCH("/profile/update-avatar", updateAvatar)
 }
