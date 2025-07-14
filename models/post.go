@@ -74,7 +74,7 @@ func GetPostByID(id int64) (*Post, error) {
 func (post Post) Update() error {
 	query := `
 	UPDATE posts
-	SET title=?, content=?, user_id=?
+	SET title=?, content=?, user_id=?, image=?
 	WHERE id=?
 	`
 	stmt, err := db.DB.Prepare(query)
@@ -83,7 +83,7 @@ func (post Post) Update() error {
 	}
 	defer stmt.Close()
 
-	_, err = stmt.Exec(post.Title, post.Content, post.UserID, post.ID)
+	_, err = stmt.Exec(post.Title, post.Content, post.UserID, post.Image, post.ID)
 	return err
 }
 
