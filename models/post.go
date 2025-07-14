@@ -35,10 +35,10 @@ func (p Post) Save() error {
 }
 
 // GetAllPosts  -> Get method
-func GetAllPosts() ([]Post, error) {
-	query := "SELECT * FROM posts"
+func GetAllPosts(limit, offset int) ([]Post, error) {
+	query := "SELECT * FROM posts ORDER BY created_at DESC LIMIT ? OFFSET ?"
 
-	rows, err := db.DB.Query(query)
+	rows, err := db.DB.Query(query, limit, offset)
 	if err != nil {
 		return nil, err
 	}

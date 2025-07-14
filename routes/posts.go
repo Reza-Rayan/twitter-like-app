@@ -12,14 +12,21 @@ import (
 
 // allPosts -> GET method
 func allPosts(context *gin.Context) {
-	posts, err := models.GetAllPosts()
+	limit, offset, _ := utils.ParsePagination(context.Request)
+
+	posts, err := models.GetAllPosts(limit, offset)
 	if err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{
 			"message": "fetch the get posts",
 			"error":   err.Error(),
 		})
 	}
-	context.JSON(http.StatusOK, gin.H{"message": "Get All Posts", "posts": posts})
+	context.JSON(http.StatusOK, gin.H{
+		"message": "Get All Posts",
+		"posts":   posts,
+		"limit":   limit,
+		"offset":  offset,
+	})
 }
 
 // createPost -> POST method
