@@ -7,7 +7,7 @@ import (
 
 func ParsePagination(r *http.Request) (limit, offset int, err error) {
 	const (
-		defaultLimit = 2
+		defaultLimit = 10
 		defaultPage  = 1
 		maxLimit     = 100
 	)
