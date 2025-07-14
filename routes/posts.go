@@ -66,6 +66,7 @@ func createPost(c *gin.Context) {
 		return
 	}
 	followers, err := models.GetFollowers(userId)
+	user, err := models.GetUserByID(userId)
 
 	if err == nil {
 		for _, follower := range followers {
@@ -74,7 +75,7 @@ func createPost(c *gin.Context) {
 				SenderID:    userId,
 				Type:        "new_post",
 				PostID:      &post.ID,
-				Message:     fmt.Sprintf("User %s created a new post", post.Title),
+				Message:     fmt.Sprintf("User %s created a new post", user.Email),
 			}
 			_ = notification.Save()
 		}
