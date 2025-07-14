@@ -7,8 +7,30 @@ type Profile struct {
 	Email     string       `json:"email"`
 	Username  string       `json:"username"`
 	Avatar    *string      `json:"avatar,omitempty"`
+	Posts     []Post       `json:"posts"`
 	Followers []PublicUser `json:"followers"`
 	Following []PublicUser `json:"following"`
+}
+
+func GetPostsByUserID(userID int64) ([]Post, error) {
+	query := `SELECT id, title, content, created_at, user_id, image FROM posts WHERE user_id = ?`
+
+	rows, err := db.DB.Query(query, userID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var posts []Post
+	for rows.Next() {
+		var post Post
+		err := rows.Scan(&post.ID, &post.Title, &post.Content, &post.CreatedAt, &post.UserID, &post.Image)
+		if err != nil {
+			return nil, err
+		}
+		posts = append(posts, post)
+	}
+	return posts, nil
 }
 
 func GetUserProfile(userID int64) (*Profile, error) {
@@ -33,6 +55,13 @@ func GetUserProfile(userID int64) (*Profile, error) {
 		return nil, err
 	}
 	user.Following = following
+
+	// Get posts
+	posts, err := GetPostsByUserID(userID)
+	if err != nil {
+		return nil, err
+	}
+	user.Posts = posts
 
 	return &user, nil
 }
