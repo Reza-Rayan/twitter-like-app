@@ -6,25 +6,26 @@ import (
 )
 
 type Post struct {
-	ID        int64
-	Title     string    `binding:"required"`
-	Content   string    `binding:"required"`
-	CreatedAt time.Time `binding:"required"`
-	UserID    int64
+	ID        int64     `json:"id"`
+	Title     string    `json:"title" binding:"required"`
+	Content   string    `json:"content" binding:"required"`
+	CreatedAt time.Time `json:"created_at"`
+	UserID    int64     `json:"user_id"`
+	Image     *string   `json:"image"`
 }
 
 // Save  New -> POST method
 func (p Post) Save() error {
 	query := `
-		INSERT INTO posts(title, content, created_at, user_id)
-		VALUES(?, ?, ?, ?)
+		INSERT INTO posts(title, content, created_at, user_id, image)
+		VALUES(?, ?, ?, ?, ?)
 		`
 	stmt, err := db.DB.Prepare(query)
 	if err != nil {
 		return err
 	}
 	defer stmt.Close()
-	result, err := stmt.Exec(p.Title, p.Content, p.CreatedAt, p.UserID)
+	result, err := stmt.Exec(p.Title, p.Content, p.CreatedAt, p.UserID, p.Image)
 	if err != nil {
 		return err
 	}
@@ -47,7 +48,7 @@ func GetAllPosts() ([]Post, error) {
 	var posts []Post
 	for rows.Next() {
 		var post Post
-		err := rows.Scan(&post.ID, &post.Title, &post.Content, &post.CreatedAt, &post.UserID)
+		err := rows.Scan(&post.ID, &post.Title, &post.Content, &post.CreatedAt, &post.UserID, &post.Image)
 		if err != nil {
 			return nil, err
 		}
