@@ -298,6 +298,35 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "avatar Copy",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "avatar",
+									"type": "file",
+									"src": "/home/reza/Pictures/photo_2025-01-15_20-16-49.jpg"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{web_url}}/{{version}}/profile/update-avatar",
+							"host": [
+								"{{web_url}}"
+							],
+							"path": [
+								"{{version}}",
+								"profile",
+								"update-avatar"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		}
@@ -347,7 +376,7 @@
 		},
 		{
 			"key": "token",
-			"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InJlemFAZ21haWwuY29tIiwiZXhwIjoxNzUyNzM1NjQ4LCJ1c2VySWQiOjF9._drnRxrmfsfPtBAcQI87lq_nSUdDh5F04aZ3O1crGco",
+			"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InJlemFAZ21haWwuY29tIiwiZXhwIjoxNzUyNzQzNjczLCJ1c2VySWQiOjF9.F63l6rzDPYfUSaLW6cm624G32wnLtUBUaL_GVG0aK_Y",
 			"type": "string"
 		}
 	]
