@@ -41,6 +41,13 @@
 							"path": [
 								"{{version}}",
 								"posts"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1",
+									"disabled": true
+								}
 							]
 						}
 					},
