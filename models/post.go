@@ -14,6 +14,16 @@ type Post struct {
 	Image     *string `json:"image,omitempty"`
 }
 
+type PostWithLikes struct {
+	ID         int64     `json:"id"`
+	Title      string    `json:"title"`
+	Content    string    `json:"content"`
+	CreatedAt  time.Time `json:"created_at"`
+	UserID     int64     `json:"user_id"`
+	Image      *string   `json:"image,omitempty"`
+	LikesCount int       `json:"likes_count"`
+}
+
 // Save  New -> POST method
 func (p Post) Save() error {
 	query := `
@@ -35,10 +45,9 @@ func (p Post) Save() error {
 }
 
 // GetAllPosts  -> Get method
-func GetAllPosts(limit, offset int) ([]Post, int, error) {
-	var posts []Post
+func GetAllPosts(limit, offset int) ([]PostWithLikes, int, error) {
+	var posts []PostWithLikes
 
-	// Get posts with LIMIT and OFFSET
 	query := `SELECT * FROM posts ORDER BY created_at DESC LIMIT ? OFFSET ?`
 	rows, err := db.DB.Query(query, limit, offset)
 	if err != nil {
@@ -47,15 +56,22 @@ func GetAllPosts(limit, offset int) ([]Post, int, error) {
 	defer rows.Close()
 
 	for rows.Next() {
-		var post Post
+		var post PostWithLikes
 		err := rows.Scan(&post.ID, &post.Title, &post.Content, &post.CreatedAt, &post.UserID, &post.Image)
 		if err != nil {
 			return nil, 0, err
 		}
+
+		// Fetch like count
+		count, err := CountPostLikes(post.ID)
+		if err != nil {
+			return nil, 0, err
+		}
+		post.LikesCount = count
+
 		posts = append(posts, post)
 	}
 
-	// Get total count
 	var totalCount int
 	countQuery := `SELECT COUNT(*) FROM posts`
 	err = db.DB.QueryRow(countQuery).Scan(&totalCount)

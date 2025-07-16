@@ -7,6 +7,7 @@ import (
 	"strconv"
 )
 
+// likePost -> POST method
 func likePost(context *gin.Context) {
 	userID := context.GetInt64("userId")
 	postID, err := strconv.ParseInt(context.Param("id"), 10, 64)
@@ -21,6 +22,7 @@ func likePost(context *gin.Context) {
 	context.JSON(http.StatusOK, gin.H{"message": "Post liked"})
 }
 
+// unLikePost -> DELETE method
 func unLikePost(context *gin.Context) {
 	userID := context.GetInt64("userId")
 	postID, err := strconv.ParseInt(context.Param("id"), 10, 64)
@@ -34,4 +36,19 @@ func unLikePost(context *gin.Context) {
 		return
 	}
 	context.JSON(http.StatusOK, gin.H{"message": "Post unliked"})
+}
+
+func getPostsLike(context *gin.Context) {
+	postID, err := strconv.ParseInt(context.Param("id"), 10, 64)
+	if err != nil {
+		context.JSON(http.StatusBadRequest,
+			gin.H{"error": "Invalid post ID"})
+		return
+	}
+	count, err := models.CountPostLikes(postID)
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch like count"})
+		return
+	}
+	context.JSON(http.StatusOK, gin.H{"post_id": postID, "likes": count})
 }

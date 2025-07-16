@@ -126,9 +126,19 @@ func singlePost(context *gin.Context) {
 		})
 		return
 	}
+	// Get post likes
+	count, err := models.CountPostLikes(postId)
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{
+			"message": "Failed to get post likes",
+			"error":   err.Error(),
+		})
+		return
+	}
 	context.JSON(http.StatusOK, gin.H{
-		"message": "Find the post",
-		"post":    post,
+		"message":     "Find the post",
+		"post":        post,
+		"likes_count": count,
 	})
 
 }
