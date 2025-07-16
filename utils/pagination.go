@@ -5,7 +5,7 @@ import (
 	"strconv"
 )
 
-func ParsePagination(r *http.Request) (limit, offset int, err error) {
+func ParsePagination(r *http.Request) (limit, offset, page int, err error) {
 	const (
 		defaultLimit = 10
 		defaultPage  = 1
@@ -17,7 +17,7 @@ func ParsePagination(r *http.Request) (limit, offset int, err error) {
 	pageStr := query.Get("page")
 	limitStr := query.Get("limit")
 
-	page := defaultPage
+	page = defaultPage
 	limit = defaultLimit
 
 	if pageStr != "" {
@@ -36,5 +36,5 @@ func ParsePagination(r *http.Request) (limit, offset int, err error) {
 	}
 
 	offset = (page - 1) * limit
-	return limit, offset, nil
+	return limit, offset, page, nil
 }

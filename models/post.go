@@ -35,25 +35,35 @@ func (p Post) Save() error {
 }
 
 // GetAllPosts  -> Get method
-func GetAllPosts(limit, offset int) ([]Post, error) {
-	query := "SELECT * FROM posts ORDER BY created_at DESC LIMIT ? OFFSET ?"
+func GetAllPosts(limit, offset int) ([]Post, int, error) {
+	var posts []Post
 
+	// Get posts with LIMIT and OFFSET
+	query := `SELECT * FROM posts ORDER BY created_at DESC LIMIT ? OFFSET ?`
 	rows, err := db.DB.Query(query, limit, offset)
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 	defer rows.Close()
 
-	var posts []Post
 	for rows.Next() {
 		var post Post
 		err := rows.Scan(&post.ID, &post.Title, &post.Content, &post.CreatedAt, &post.UserID, &post.Image)
 		if err != nil {
-			return nil, err
+			return nil, 0, err
 		}
 		posts = append(posts, post)
 	}
-	return posts, nil
+
+	// Get total count
+	var totalCount int
+	countQuery := `SELECT COUNT(*) FROM posts`
+	err = db.DB.QueryRow(countQuery).Scan(&totalCount)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	return posts, totalCount, nil
 }
 
 // GetPostByID -> Get method & find by id

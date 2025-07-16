@@ -12,20 +12,26 @@ import (
 
 // allPosts -> GET method
 func allPosts(context *gin.Context) {
-	limit, offset, _ := utils.ParsePagination(context.Request)
+	limit, offset, page, _ := utils.ParsePagination(context.Request)
 
-	posts, err := models.GetAllPosts(limit, offset)
+	posts, totalCount, err := models.GetAllPosts(limit, offset)
 	if err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{
-			"message": "fetch the get posts",
+			"message": "Failed to fetch posts",
 			"error":   err.Error(),
 		})
+		return
 	}
+
+	totalPages := (totalCount + limit - 1) / limit
+
 	context.JSON(http.StatusOK, gin.H{
-		"message": "Get All Posts",
-		"posts":   posts,
-		"limit":   limit,
-		"offset":  offset,
+		"message":    "Get All Posts",
+		"posts":      posts,
+		"limit":      limit,
+		"page":       page,
+		"totalCount": totalCount,
+		"totalPages": totalPages,
 	})
 }
 
