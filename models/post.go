@@ -7,9 +7,9 @@ import (
 
 type Post struct {
 	ID        int64
-	Title     string    `binding:"required"`
-	Content   string    `binding:"required"`
-	CreatedAt time.Time `binding:"required"`
+	Title     string `binding:"required"`
+	Content   string `binding:"required"`
+	CreatedAt time.Time
 	UserID    int64
 	Image     *string `json:"image,omitempty"`
 }
