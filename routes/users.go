@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"github.com/Reza-Rayan/twitter-like-app/dto"
 	"github.com/Reza-Rayan/twitter-like-app/models"
 	"github.com/Reza-Rayan/twitter-like-app/utils"
 	"github.com/gin-gonic/gin"
@@ -15,24 +16,30 @@ var UpdateProfile struct {
 
 // signup -> POST method
 func signup(context *gin.Context) {
-	var user models.User
+	var input dto.SignupRequest
+	if err := context.ShouldBindJSON(&input); err != nil {
+		errors := dto.GetValidationErrors(err)
+		context.JSON(http.StatusBadRequest, gin.H{"errors": errors})
+		return
+	}
 
-	err := context.ShouldBindJSON(&user)
+	hashedPassword, err := utils.HashPassword(input.Password)
 	if err != nil {
-		context.JSON(http.StatusBadRequest, gin.H{
-			"message": "Could not parse body",
-			"error":   err.Error(),
-		})
+		context.JSON(http.StatusInternalServerError, gin.H{"message": "Failed to hash password", "error": err.Error()})
 		return
 	}
-	err = user.Save()
-	if err != nil {
-		context.JSON(http.StatusInternalServerError, gin.H{
-			"message": "Could not save user",
-			"error":   err.Error(),
-		})
+
+	user := models.User{
+		Email:    input.Email,
+		Username: input.Username,
+		Password: hashedPassword,
+	}
+
+	if err := user.Save(); err != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"message": "Could not save user", "error": err.Error()})
 		return
 	}
+
 	context.JSON(http.StatusOK, gin.H{
 		"message": "User created successfully",
 		"user":    user,
@@ -41,29 +48,26 @@ func signup(context *gin.Context) {
 
 // login -> POST method
 func login(context *gin.Context) {
-	var user models.User
-	err := context.ShouldBindJSON(&user)
-	if err != nil {
-		context.JSON(http.StatusBadRequest, gin.H{
-			"message": "Could not parse body",
-			"error":   err.Error(),
-		})
+	var input dto.LoginRequest
+	if err := context.ShouldBindJSON(&input); err != nil {
+		errors := dto.GetValidationErrors(err)
+		context.JSON(http.StatusBadRequest, gin.H{"errors": errors})
 		return
 	}
-	err = user.ValidateCredentials()
-	if err != nil {
-		context.JSON(http.StatusUnauthorized, gin.H{
-			"message": "Could not validate credentials",
-			"error":   err.Error(),
-		})
+
+	user := models.User{
+		Email:    input.Email,
+		Password: input.Password,
+	}
+
+	if err := user.ValidateCredentials(); err != nil {
+		context.JSON(http.StatusUnauthorized, gin.H{"message": "Invalid credentials", "error": err.Error()})
 		return
 	}
+
 	token, err := utils.GenerateToken(user.Email, user.ID)
 	if err != nil {
-		context.JSON(http.StatusInternalServerError, gin.H{
-			"message": "Could not authorize this user",
-			"error":   err.Error(),
-		})
+		context.JSON(http.StatusInternalServerError, gin.H{"message": "Failed to generate token", "error": err.Error()})
 		return
 	}
 

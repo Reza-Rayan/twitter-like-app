@@ -1,10 +1,13 @@
 package routes
 
 import (
+	"errors"
 	"fmt"
+	"github.com/Reza-Rayan/twitter-like-app/dto"
 	"github.com/Reza-Rayan/twitter-like-app/models"
 	"github.com/Reza-Rayan/twitter-like-app/utils"
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
 	"net/http"
 	"strconv"
 	"time"
@@ -38,6 +41,21 @@ func allPosts(context *gin.Context) {
 // createPost -> POST method
 func createPost(c *gin.Context) {
 	userId := c.GetInt64("userId")
+
+	var input dto.CreatePostRequest
+	if err := c.ShouldBind(&input); err != nil {
+		var ve validator.ValidationErrors
+		if errors.As(err, &ve) {
+			out := make(map[string]string)
+			for _, fe := range ve {
+				out[fe.Field()] = dto.CustomErrorMessage(fe)
+			}
+			c.JSON(http.StatusBadRequest, gin.H{"errors": out})
+			return
+		}
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
 
 	title := c.PostForm("title")
 	content := c.PostForm("content")
