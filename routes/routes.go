@@ -32,4 +32,8 @@ func RegisterRoutes(server *gin.Engine) {
 
 	//	Notifications
 	authenticated.GET("/notifications", getUserNotifications)
+
+	//	Like Post v1/post_id/
+	authenticated.POST("/posts/:id/like", likePost)
+	authenticated.DELETE("/posts/:id/like", unLikePost)
 }
