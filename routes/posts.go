@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/Reza-Rayan/twitter-like-app/dto"
@@ -8,6 +9,7 @@ import (
 	"github.com/Reza-Rayan/twitter-like-app/utils"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
+	"log"
 	"net/http"
 	"strconv"
 	"time"
@@ -17,6 +19,19 @@ import (
 func allPosts(context *gin.Context) {
 	limit, offset, page, _ := utils.ParsePagination(context.Request)
 
+	// Cache key (include pagination)
+	cacheKey := fmt.Sprintf("posts:limit:%d:offset:%d", limit, offset)
+
+	cached, err := utils.GetCache(cacheKey)
+	if err == nil {
+		var cachedResponse map[string]interface{}
+		if jsonErr := json.Unmarshal([]byte(cached), &cachedResponse); jsonErr == nil {
+			context.JSON(http.StatusOK, cachedResponse)
+			return
+		}
+	}
+
+	// Cache miss: Get from DB
 	posts, totalCount, err := models.GetAllPosts(limit, offset)
 	if err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{
@@ -27,15 +42,20 @@ func allPosts(context *gin.Context) {
 	}
 
 	totalPages := (totalCount + limit - 1) / limit
-
-	context.JSON(http.StatusOK, gin.H{
+	response := gin.H{
 		"message":    "Get All Posts",
 		"posts":      posts,
 		"limit":      limit,
 		"page":       page,
 		"totalCount": totalCount,
 		"totalPages": totalPages,
-	})
+	}
+
+	// Set cache for 10 minutes
+	bytes, _ := json.Marshal(response)
+	_ = utils.SetCache(cacheKey, string(bytes), utils.CacheTime)
+
+	context.JSON(http.StatusOK, response)
 }
 
 // createPost -> POST method
@@ -103,6 +123,10 @@ func createPost(c *gin.Context) {
 			}
 			_ = notification.Save()
 		}
+	}
+	// Clear Cache
+	if err := utils.ClearPostsCache(); err != nil {
+		log.Printf("Failed to clear posts cache: %v", err)
 	}
 
 	c.JSON(http.StatusCreated, gin.H{"message": "Post created", "post": post})
@@ -194,7 +218,10 @@ func updatePost(context *gin.Context) {
 		context.JSON(http.StatusInternalServerError, gin.H{"message": "Failed to update post", "error": err.Error()})
 		return
 	}
-
+	// Clear Cache
+	if err := utils.ClearPostsCache(); err != nil {
+		log.Printf("Failed to clear posts cache: %v", err)
+	}
 	context.JSON(http.StatusOK, gin.H{"message": "Post updated successfully", "post": post})
 }
 
@@ -235,5 +262,10 @@ func deletePost(context *gin.Context) {
 		})
 		return
 	}
+	// Clear Cache
+	if err := utils.ClearPostsCache(); err != nil {
+		log.Printf("Failed to clear posts cache: %v", err)
+	}
+
 	context.JSON(http.StatusOK, gin.H{"message": "Delete Post Was successfully", "post": post})
 }
