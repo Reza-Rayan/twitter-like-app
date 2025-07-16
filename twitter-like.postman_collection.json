@@ -10,6 +10,63 @@
 			"name": "posts",
 			"item": [
 				{
+					"name": "like",
+					"item": [
+						{
+							"name": "like post",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{web_url}}/{{version}}/posts/:id/like",
+									"host": [
+										"{{web_url}}"
+									],
+									"path": [
+										"{{version}}",
+										"posts",
+										":id",
+										"like"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "unlike",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{web_url}}/{{version}}/posts/:id/like",
+									"host": [
+										"{{web_url}}"
+									],
+									"path": [
+										"{{version}}",
+										"posts",
+										":id",
+										"like"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
 					"name": "single",
 					"request": {
 						"method": "GET",
@@ -72,14 +129,9 @@
 									"type": "text"
 								},
 								{
-									"key": "CreatedAt",
-									"value": "2025-07-13 17:25:09.599762685+03:30",
-									"type": "text"
-								},
-								{
 									"key": "image",
 									"type": "file",
-									"src": "/home/reza/Pictures/desktop-wallpaper-hire-react-js-developers-react-native.webp"
+									"src": "/home/reza/Downloads/twitter-clone.png"
 								}
 							]
 						},
@@ -307,9 +359,9 @@
 					"response": []
 				},
 				{
-					"name": "avatar Copy",
+					"name": "Update Profile",
 					"request": {
-						"method": "PATCH",
+						"method": "PUT",
 						"header": [],
 						"body": {
 							"mode": "formdata",
@@ -322,14 +374,13 @@
 							]
 						},
 						"url": {
-							"raw": "{{web_url}}/{{version}}/profile/update-avatar",
+							"raw": "{{web_url}}/{{version}}/profile",
 							"host": [
 								"{{web_url}}"
 							],
 							"path": [
 								"{{version}}",
-								"profile",
-								"update-avatar"
+								"profile"
 							]
 						}
 					},
