@@ -8,3 +8,6 @@ database:
   name: "twitter.db"
   max_idle_conns: 10
   max_open_conns: 5
+monitoring:
+  enabled: true
+  path: /metrics

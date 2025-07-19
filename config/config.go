@@ -19,6 +19,11 @@ type Config struct {
 		MaxIdleConns int    `mapstructure:"max_idle_conns"`
 		MaxOpenConns int    `mapstructure:"max_open_conns"`
 	} `mapstructure:"database"`
+
+	Monitoring struct {
+		Enabled bool   `mapstructure:"enabled"`
+		Path    string `mapstructure:"path"`
+	} `mapstructure:"monitoring"`
 }
 
 var AppConfig *Config

@@ -15,9 +15,13 @@ func main() {
 	server := gin.Default()
 	routes.RegisterRoutes(server)
 
-	// Apply Prometheus monitoring
+	// Apply Prometheus middleware globally
 	server.Use(middlewares.PrometheusMiddleware())
-	server.GET("/metrics", middlewares.PrometheusHandler())
+
+	// Conditionally expose /metrics based on config
+	if config.AppConfig.Monitoring.Enabled {
+		server.GET(config.AppConfig.Monitoring.Path, middlewares.PrometheusHandler())
+	}
 
 	server.Static("/uploads", "./uploads") // Serve files in the uploads folder at /uploads URL path
 
