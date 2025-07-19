@@ -410,6 +410,23 @@
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "monitoring",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{web_url}}/metrics",
+					"host": [
+						"{{web_url}}"
+					],
+					"path": [
+						"metrics"
+					]
+				}
+			},
+			"response": []
 		}
 	],
 	"auth": {
@@ -457,7 +474,7 @@
 		},
 		{
 			"key": "token",
-			"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im1vaHNlbkBnbWFpbC5jb20iLCJleHAiOjE3NTI3NTk3MjYsInVzZXJJZCI6Mn0.JYGJnxogYrdlXk91U_vXfgp50OrIPJhWwOSF2oOjcFU",
+			"value": "",
 			"type": "string"
 		}
 	]
