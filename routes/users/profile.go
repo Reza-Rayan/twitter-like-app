@@ -8,7 +8,8 @@ import (
 	"net/http"
 )
 
-func getUserProfile(context *gin.Context) {
+// GetUserProfile -> GET method
+func GetUserProfile(context *gin.Context) {
 	userID := context.GetInt64("userId")
 
 	profile, err := models.GetUserProfile(userID)
@@ -23,7 +24,8 @@ func getUserProfile(context *gin.Context) {
 	})
 }
 
-func updateAvatar(context *gin.Context) {
+// UpdateAvatar -> PUT method
+func UpdateAvatar(context *gin.Context) {
 	userID := context.GetInt64("userId")
 
 	file, err := context.FormFile("avatar")
@@ -49,4 +51,43 @@ func updateAvatar(context *gin.Context) {
 	}
 
 	context.JSON(http.StatusOK, gin.H{"message": "Avatar updated successfully", "avatar": avatarURL})
+}
+
+// UpdateUserProfile -> PUT method
+func UpdateUserProfile(context *gin.Context) {
+	userId := context.GetInt64("userId")
+
+	// Get form values
+	email := context.PostForm("email")
+	username := context.PostForm("username")
+	password := context.PostForm("password")
+
+	user, err := models.GetUserByID(userId)
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"message": "User not found", "error": err.Error()})
+		return
+	}
+
+	if email != "" {
+		user.Email = email
+	}
+	if username != "" {
+		user.Username = username
+	}
+	if password != "" {
+		hashedPassword, err := utils.HashPassword(password)
+		if err != nil {
+			context.JSON(http.StatusInternalServerError, gin.H{"message": "Failed to hash password", "error": err.Error()})
+			return
+		}
+		user.Password = hashedPassword
+	}
+
+	err = user.UpdateProfile()
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"message": "Failed to update profile", "error": err.Error()})
+		return
+	}
+
+	context.JSON(http.StatusOK, gin.H{"message": "Profile updated successfully", "user": user})
 }

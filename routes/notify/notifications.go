@@ -1,4 +1,4 @@
-package routes
+package notify
 
 import (
 	"github.com/Reza-Rayan/twitter-like-app/models"
@@ -6,7 +6,8 @@ import (
 	"net/http"
 )
 
-func getUserNotifications(c *gin.Context) {
+// GtUserNotifications -> GET method
+func GtUserNotifications(c *gin.Context) {
 	userID := c.GetInt64("userId")
 
 	notifs, err := models.GetUserNotifications(userID)

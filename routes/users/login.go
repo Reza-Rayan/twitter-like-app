@@ -8,8 +8,8 @@ import (
 	"net/http"
 )
 
-// login -> POST method
-func login(context *gin.Context) {
+// Login -> POST method
+func Login(context *gin.Context) {
 	var input dto.LoginRequest
 	if err := context.ShouldBindJSON(&input); err != nil {
 		errors := dto.GetValidationErrors(err)

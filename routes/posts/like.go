@@ -7,8 +7,8 @@ import (
 	"strconv"
 )
 
-// likePost -> POST method
-func likePost(context *gin.Context) {
+// LikePost -> POST method
+func LikePost(context *gin.Context) {
 	userID := context.GetInt64("userId")
 	postID, err := strconv.ParseInt(context.Param("id"), 10, 64)
 	if err != nil {
@@ -22,8 +22,8 @@ func likePost(context *gin.Context) {
 	context.JSON(http.StatusOK, gin.H{"message": "Post liked"})
 }
 
-// unLikePost -> DELETE method
-func unLikePost(context *gin.Context) {
+// UnLikePost -> DELETE method
+func UnLikePost(context *gin.Context) {
 	userID := context.GetInt64("userId")
 	postID, err := strconv.ParseInt(context.Param("id"), 10, 64)
 	if err != nil {

@@ -7,7 +7,7 @@ import (
 	"strconv"
 )
 
-func followUser(context *gin.Context) {
+func FollowUser(context *gin.Context) {
 	// Get users IDs
 	followerID := context.GetInt64("userId")
 	followeeID, err := strconv.ParseInt(context.Param("id"), 10, 64)
@@ -27,7 +27,7 @@ func followUser(context *gin.Context) {
 	context.JSON(http.StatusOK, gin.H{"message": "Followed user"})
 }
 
-func unfollowUser(context *gin.Context) {
+func UnfollowUser(context *gin.Context) {
 	// Get users IDs
 	followerID := context.GetInt64("userId")
 	followeeID, err := strconv.ParseInt(context.Param("id"), 10, 64)
