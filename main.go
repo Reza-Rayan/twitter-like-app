@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/Reza-Rayan/twitter-like-app/cmd"
 	"github.com/Reza-Rayan/twitter-like-app/config"
 	"github.com/Reza-Rayan/twitter-like-app/db"
 	"github.com/Reza-Rayan/twitter-like-app/middlewares"
@@ -17,6 +18,9 @@ func main() {
 
 	// Apply Prometheus middleware globally
 	server.Use(middlewares.PrometheusMiddleware())
+
+	// Running CLI
+	cmd.Execute()
 
 	// Conditionally expose /metrics based on config
 	if config.AppConfig.Monitoring.Enabled {
