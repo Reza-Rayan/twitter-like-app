@@ -8,6 +8,11 @@ import (
 
 func AuthMiddleware(context *gin.Context) {
 	token := context.GetHeader("Authorization")
+	// If no Authorization header, check query param
+	if token == "" {
+		token = context.Query("token")
+	}
+
 	if token == "" {
 		context.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
 			"message": "Authorization token required",
