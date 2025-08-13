@@ -18,18 +18,12 @@ func RegisterRoutes(server *gin.Engine, db *sql.DB) {
 	// Posts Routes -> v1/post/*
 	RegisterPostRoutes(authenticated, db)
 
-	//	Users Routes -> v1/register && v1/login
-	router.POST("/signup", userRoutes.Signup)
-	router.POST("/login", userRoutes.Login)
+	//	Users Routes -> v1/register && v1/login && v1/profile/*
+	RegisterUserRoutes(authenticated, db)
 
 	//	Follow Users -> v1/follow
 	authenticated.POST("/follow/:id", userRoutes.FollowUser)
 	authenticated.DELETE("/unfollow/:id", userRoutes.UnfollowUser)
-
-	//	Profile v1/users
-	authenticated.GET("/profile", userRoutes.GetUserProfile)
-	authenticated.PATCH("/profile/update-avatar", userRoutes.UpdateAvatar)
-	authenticated.PUT("profile", userRoutes.UpdateUserProfile)
 
 	//	Notifications
 	authenticated.GET("/notifications", notifyRoutes.GtUserNotifications)

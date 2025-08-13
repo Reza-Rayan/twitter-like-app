@@ -12,6 +12,7 @@ func RegisterPostRoutes(router *gin.RouterGroup, db *sql.DB) {
 	repo := postRepo.NewPostRepository(db)
 	service := postService.NewPostService(repo)
 	h := handler.NewPostHandler(service)
+
 	postRouter := router.Group("/posts")
 	postRouter.GET("/", h.GetAllPosts)
 	postRouter.GET("/:id", h.GetPostByID)
