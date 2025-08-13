@@ -13,6 +13,8 @@ type PostRepository interface {
 	Update(p *post.Post) error
 	Delete(id int64) error
 	CountLikes(postID int64) (int, error)
+	LikePost(userID, postID int64) error
+	UnLikePost(userID, postID int64) error
 }
 
 type postRepo struct {
@@ -96,4 +98,16 @@ func (r *postRepo) CountLikes(postID int64) (int, error) {
 	var count int
 	err := r.db.QueryRow(`SELECT COUNT(*) FROM likes WHERE post_id=?`, postID).Scan(&count)
 	return count, err
+}
+
+func (r *postRepo) LikePost(userID, postID int64) error {
+	query := `INSERT OR IGNORE INTO likes (user_id, post_id) VALUES (?, ?)`
+	_, err := r.db.Exec(query, userID, postID)
+	return err
+}
+
+func (r *postRepo) UnLikePost(userID, postID int64) error {
+	query := `DELETE FROM likes WHERE user_id = ? AND post_id = ?`
+	_, err := r.db.Exec(query, userID, postID)
+	return err
 }

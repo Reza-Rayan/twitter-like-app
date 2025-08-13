@@ -9,6 +9,8 @@ type PostService interface {
 	GetPost(id int64) (*post.Post, error)
 	UpdatePost(p *post.Post) error
 	DeletePost(id int64) error
+	LikePost(userID, postID int64) error
+	UnLikePost(userID, postID int64) error
 }
 
 type postService struct {
@@ -37,4 +39,12 @@ func (s *postService) UpdatePost(p *post.Post) error {
 
 func (s *postService) DeletePost(id int64) error {
 	return s.repo.Delete(id)
+}
+
+func (s *postService) LikePost(userID, postID int64) error {
+	return s.repo.LikePost(userID, postID)
+}
+
+func (s *postService) UnLikePost(userID, postID int64) error {
+	return s.repo.UnLikePost(userID, postID)
 }

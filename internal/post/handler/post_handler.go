@@ -190,3 +190,34 @@ func (h *PostHandler) DeletePost(c *gin.Context) {
 		"message": "Post deleted",
 	})
 }
+
+// LikePost -> POST method
+func (h *PostHandler) LikePost(ctx *gin.Context) {
+	userID := ctx.GetInt64("userId")
+	postID, err := strconv.ParseInt(ctx.Param("id"), 10, 64)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid post ID"})
+		return
+	}
+	err = h.service.LikePost(userID, postID)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to like post", "data": err.Error()})
+		return
+	}
+	ctx.JSON(http.StatusOK, gin.H{"message": "Post liked"})
+}
+
+func (h *PostHandler) UnLikePost(ctx *gin.Context) {
+	userID := ctx.GetInt64("userId")
+	postID, err := strconv.ParseInt(ctx.Param("id"), 10, 64)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid post ID"})
+		return
+	}
+	err = h.service.UnLikePost(userID, postID)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to like post", "data": err.Error()})
+		return
+	}
+	ctx.JSON(http.StatusOK, gin.H{"message": "Post unliked"})
+}

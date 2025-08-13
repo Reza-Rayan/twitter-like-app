@@ -19,6 +19,6 @@ func RegisterPostRoutes(router *gin.RouterGroup, db *sql.DB) {
 	postRouter.PUT("/:id", h.UpdatePost)
 	postRouter.DELETE("/:id", h.DeletePost)
 
-	//router.POST("/posts/:id/like", h.LikePost)
-	//router.DELETE("/posts/:id/like", h.UnLikePost)
+	router.POST("/posts/:id/like", h.LikePost)
+	router.DELETE("/posts/:id/like", h.UnLikePost)
 }

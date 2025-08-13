@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"github.com/Reza-Rayan/twitter-like-app/middlewares"
 	notifyRoutes "github.com/Reza-Rayan/twitter-like-app/routes/notify"
-	postRoutes "github.com/Reza-Rayan/twitter-like-app/routes/posts"
 	userRoutes "github.com/Reza-Rayan/twitter-like-app/routes/users"
 	"github.com/Reza-Rayan/twitter-like-app/websocket"
 
@@ -34,10 +33,6 @@ func RegisterRoutes(server *gin.Engine, db *sql.DB) {
 
 	//	Notifications
 	authenticated.GET("/notifications", notifyRoutes.GtUserNotifications)
-
-	//	Like Post v1/post_id/
-	authenticated.POST("/posts/:id/like", postRoutes.LikePost)
-	authenticated.DELETE("/posts/:id/like", postRoutes.UnLikePost)
 
 	//  Send message (ws)
 	authenticated.GET("/messages", userRoutes.GetMessages)
