@@ -3,7 +3,6 @@ package routes
 import (
 	"github.com/Reza-Rayan/twitter-like-app/dto"
 	"github.com/Reza-Rayan/twitter-like-app/models"
-	"github.com/Reza-Rayan/twitter-like-app/utils"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -17,16 +16,10 @@ func Signup(context *gin.Context) {
 		return
 	}
 
-	hashedPassword, err := utils.HashPassword(input.Password)
-	if err != nil {
-		context.JSON(http.StatusInternalServerError, gin.H{"message": "Failed to hash password", "error": err.Error()})
-		return
-	}
-
 	user := models.User{
 		Email:    input.Email,
 		Username: input.Username,
-		Password: hashedPassword,
+		Password: input.Password,
 	}
 
 	if err := user.Save(); err != nil {
