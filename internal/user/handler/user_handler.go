@@ -117,7 +117,7 @@ func (h *UserHandler) UpdateUserAvatar(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{"message": "Avatar updated successfully", "avatar": avatarURL})
 }
 
-// UpdateProfile
+// UpdateProfile -> PUT method
 func (h *UserHandler) UpdateProfile(ctx *gin.Context) {
 	userId := ctx.GetInt64("userId")
 	// Get form values

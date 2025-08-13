@@ -18,12 +18,8 @@ func RegisterRoutes(server *gin.Engine, db *sql.DB) {
 	// Posts Routes -> v1/post/*
 	RegisterPostRoutes(authenticated, db)
 
-	//	Users Routes -> v1/register && v1/login && v1/profile/*
+	//	Users Routes -> v1/register && v1/login && v1/profile/* && v1/follow && v1/unfollow
 	RegisterUserRoutes(authenticated, db)
-
-	//	Follow Users -> v1/follow
-	authenticated.POST("/follow/:id", userRoutes.FollowUser)
-	authenticated.DELETE("/unfollow/:id", userRoutes.UnfollowUser)
 
 	//	Notifications
 	authenticated.GET("/notifications", notifyRoutes.GtUserNotifications)

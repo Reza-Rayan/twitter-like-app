@@ -11,6 +11,8 @@ type UserService interface {
 	GetUserProfile(int64) (*user.User, error)
 	UpdateUserAvatar(userID int64, avatarURL string) error
 	UpdateProfile(u *user.User) error
+	FollowUser(follow user.Follow) error
+	UnfollowUser(userID int64, unfollowID int64) error
 }
 
 type userService struct {

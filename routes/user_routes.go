@@ -18,4 +18,8 @@ func RegisterUserRoutes(router *gin.RouterGroup, db *sql.DB) {
 	router.GET("/profile", h.GetUserProfile)
 	router.PATCH("/profile/update-avatar", h.UpdateUserAvatar)
 	router.PUT("/profile", h.UpdateProfile)
+
+	//	Follow && Unfollow User
+	router.POST("/follow/:id", h.FollowUser)
+	router.DELETE("/unfollow/:id", h.UnfollowUser)
 }
