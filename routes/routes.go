@@ -3,7 +3,6 @@ package routes
 import (
 	"database/sql"
 	"github.com/Reza-Rayan/twitter-like-app/middlewares"
-	notifyRoutes "github.com/Reza-Rayan/twitter-like-app/routes/notify"
 	"github.com/gin-gonic/gin"
 )
 
@@ -19,6 +18,6 @@ func RegisterRoutes(server *gin.Engine, db *sql.DB) {
 	RegisterUserRoutes(authenticated, db)
 
 	//	Notifications
-	authenticated.GET("/notifications", notifyRoutes.GtUserNotifications)
+	RegisterNotificationRoutes(authenticated, db)
 
 }
