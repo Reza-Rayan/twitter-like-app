@@ -9,17 +9,17 @@ import (
 
 // Signup -> POST method
 func Signup(context *gin.Context) {
-	var input dto.SignupRequest
-	if err := context.ShouldBindJSON(&input); err != nil {
+	var formRequest dto.SignupRequest
+	if err := context.ShouldBindJSON(&formRequest); err != nil {
 		errors := dto.GetValidationErrors(err)
 		context.JSON(http.StatusBadRequest, gin.H{"errors": errors})
 		return
 	}
 
 	user := models.User{
-		Email:    input.Email,
-		Username: input.Username,
-		Password: input.Password,
+		Email:    formRequest.Email,
+		Username: formRequest.Username,
+		Password: formRequest.Password,
 	}
 
 	if err := user.Save(); err != nil {
