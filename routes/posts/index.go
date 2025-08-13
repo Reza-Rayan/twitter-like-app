@@ -14,7 +14,7 @@ func AllPosts(context *gin.Context) {
 	limit, offset, page, _ := utils.ParsePagination(context.Request)
 
 	// Cache key (include pagination)
-	cacheKey := fmt.Sprintf("posts:limit:%d:offset:%d", limit, offset)
+	cacheKey := fmt.Sprintf("post:limit:%d:offset:%d", limit, offset)
 
 	cached, err := utils.GetCache(cacheKey)
 	if err == nil {
@@ -29,7 +29,7 @@ func AllPosts(context *gin.Context) {
 	posts, totalCount, err := models.GetAllPosts(limit, offset)
 	if err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{
-			"message": "Failed to fetch posts",
+			"message": "Failed to fetch post",
 			"error":   err.Error(),
 		})
 		return
@@ -38,7 +38,7 @@ func AllPosts(context *gin.Context) {
 	totalPages := (totalCount + limit - 1) / limit
 	response := gin.H{
 		"message":    "Get All Posts",
-		"posts":      posts,
+		"post":       posts,
 		"limit":      limit,
 		"page":       page,
 		"totalCount": totalCount,

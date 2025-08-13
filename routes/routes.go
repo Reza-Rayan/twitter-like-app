@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"database/sql"
 	"github.com/Reza-Rayan/twitter-like-app/middlewares"
 	notifyRoutes "github.com/Reza-Rayan/twitter-like-app/routes/notify"
 	postRoutes "github.com/Reza-Rayan/twitter-like-app/routes/posts"
@@ -10,17 +11,13 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func RegisterRoutes(server *gin.Engine) {
+func RegisterRoutes(server *gin.Engine, db *sql.DB) {
 	router := server.Group("/v1")
 	authenticated := router.Group("/")
 	authenticated.Use(middlewares.AuthMiddleware)
 
 	// Posts Routes -> v1/post/*
-	router.GET("/posts", postRoutes.AllPosts)
-	router.GET("/posts/:id", postRoutes.SinglePost)
-	authenticated.POST("/posts", postRoutes.CreatePost)
-	authenticated.PUT("/posts/:id", postRoutes.UpdatePost)
-	authenticated.DELETE("/posts/:id", postRoutes.DeletePost)
+	RegisterPostRoutes(authenticated, db)
 
 	//	Users Routes -> v1/register && v1/login
 	router.POST("/signup", userRoutes.Signup)

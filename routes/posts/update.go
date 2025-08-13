@@ -45,7 +45,7 @@ func UpdatePost(context *gin.Context) {
 	// Optional: Handle new image upload
 	file, err := context.FormFile("image")
 	if err == nil {
-		uploadRelativePath := fmt.Sprintf("uploads/posts/%d_%s", userId, file.Filename)
+		uploadRelativePath := fmt.Sprintf("uploads/post/%d_%s", userId, file.Filename)
 		err = context.SaveUploadedFile(file, uploadRelativePath)
 		if err != nil {
 			context.JSON(http.StatusInternalServerError, gin.H{"message": "Failed to save image", "error": err.Error()})
@@ -63,7 +63,7 @@ func UpdatePost(context *gin.Context) {
 	}
 	// Clear Cache
 	if err := utils.ClearPostsCache(); err != nil {
-		log.Printf("Failed to clear posts cache: %v", err)
+		log.Printf("Failed to clear post cache: %v", err)
 	}
 	context.JSON(http.StatusOK, gin.H{"message": "Post updated successfully", "post": post})
 }

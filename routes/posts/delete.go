@@ -48,7 +48,7 @@ func DeletePost(context *gin.Context) {
 	}
 	// Clear Cache
 	if err := utils.ClearPostsCache(); err != nil {
-		log.Printf("Failed to clear posts cache: %v", err)
+		log.Printf("Failed to clear post cache: %v", err)
 	}
 
 	context.JSON(http.StatusOK, gin.H{"message": "Delete Post Was successfully", "post": post})

@@ -40,7 +40,7 @@ func CreatePost(c *gin.Context) {
 	var imagePath *string
 	if err == nil {
 		// Save file locally first
-		uploadRelativePath := fmt.Sprintf("uploads/posts/%d_%s", userId, file.Filename)
+		uploadRelativePath := fmt.Sprintf("uploads/post/%d_%s", userId, file.Filename)
 		err = c.SaveUploadedFile(file, uploadRelativePath)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"message": "Failed to save image", "error": err.Error()})
@@ -81,7 +81,7 @@ func CreatePost(c *gin.Context) {
 	}
 	// Clear Cache
 	if err := utils.ClearPostsCache(); err != nil {
-		log.Printf("Failed to clear posts cache: %v", err)
+		log.Printf("Failed to clear post cache: %v", err)
 	}
 
 	c.JSON(http.StatusCreated, gin.H{"message": "Post created", "post": post})

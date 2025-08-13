@@ -27,7 +27,7 @@ type PostWithLikes struct {
 // Save  New -> POST method
 func (p Post) Save() error {
 	query := `
-		INSERT INTO posts(title, content, created_at, user_id, image)
+		INSERT INTO post(title, content, created_at, user_id, image)
 		VALUES(?, ?, ?, ?, ?)
 		`
 	stmt, err := db.DB.Prepare(query)
@@ -48,7 +48,7 @@ func (p Post) Save() error {
 func GetAllPosts(limit, offset int) ([]PostWithLikes, int, error) {
 	var posts []PostWithLikes
 
-	query := `SELECT * FROM posts ORDER BY created_at DESC LIMIT ? OFFSET ?`
+	query := `SELECT * FROM post ORDER BY created_at DESC LIMIT ? OFFSET ?`
 	rows, err := db.DB.Query(query, limit, offset)
 	if err != nil {
 		return nil, 0, err
@@ -73,7 +73,7 @@ func GetAllPosts(limit, offset int) ([]PostWithLikes, int, error) {
 	}
 
 	var totalCount int
-	countQuery := `SELECT COUNT(*) FROM posts`
+	countQuery := `SELECT COUNT(*) FROM post`
 	err = db.DB.QueryRow(countQuery).Scan(&totalCount)
 	if err != nil {
 		return nil, 0, err
@@ -84,7 +84,7 @@ func GetAllPosts(limit, offset int) ([]PostWithLikes, int, error) {
 
 // GetPostByID -> Get method & find by id
 func GetPostByID(id int64) (*Post, error) {
-	query := "SELECT * FROM posts WHERE id=?"
+	query := "SELECT * FROM post WHERE id=?"
 
 	row := db.DB.QueryRow(query, id)
 
@@ -99,7 +99,7 @@ func GetPostByID(id int64) (*Post, error) {
 // Update -> PUT method & find by id
 func (post Post) Update() error {
 	query := `
-	UPDATE posts
+	UPDATE post
 	SET title=?, content=?, user_id=?, image=?
 	WHERE id=?
 	`
@@ -115,7 +115,7 @@ func (post Post) Update() error {
 
 // Delete -> DELETE method & find by id
 func (post Post) Delete() error {
-	query := "DELETE FROM posts WHERE id=?"
+	query := "DELETE FROM post WHERE id=?"
 	stmt, err := db.DB.Prepare(query)
 
 	if err != nil {
