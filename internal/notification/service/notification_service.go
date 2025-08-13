@@ -19,9 +19,7 @@ func NewNotificationService(repo repository.NotifyRepository) NotifyService {
 }
 
 func (s *notifyService) Save(notification *notification.Notification) error {
-
 	return s.repo.Save(notification)
-
 }
 
 func (s *notifyService) GetUserNotifications(userID int64) ([]notification.Notification, error) {
