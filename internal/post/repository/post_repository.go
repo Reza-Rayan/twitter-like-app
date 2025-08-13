@@ -15,6 +15,7 @@ type PostRepository interface {
 	CountLikes(postID int64) (int, error)
 	LikePost(userID, postID int64) error
 	UnLikePost(userID, postID int64) error
+	CountPostLikes(postID int64) (int, error)
 }
 
 type postRepo struct {
@@ -54,6 +55,7 @@ func (r *postRepo) GetAll(limit, offset int) ([]post.PostWithLikes, int, error) 
 	var posts []post.PostWithLikes
 	for rows.Next() {
 		var p post.PostWithLikes
+		p.LikesCount, _ = r.CountLikes(p.ID)
 		if err := rows.Scan(&p.ID, &p.Title, &p.Content, &p.CreatedAt, &p.UserID, &p.Image); err != nil {
 			return nil, 0, err
 		}
@@ -110,4 +112,11 @@ func (r *postRepo) UnLikePost(userID, postID int64) error {
 	query := `DELETE FROM likes WHERE user_id = ? AND post_id = ?`
 	_, err := r.db.Exec(query, userID, postID)
 	return err
+}
+
+func (r *postRepo) CountPostLikes(postID int64) (int, error) {
+	query := `SELECT COUNT(*) FROM likes WHERE post_id = ?`
+	var count int
+	err := r.db.QueryRow(query, postID).Scan(&count)
+	return count, err
 }

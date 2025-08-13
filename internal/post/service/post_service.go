@@ -11,6 +11,7 @@ type PostService interface {
 	DeletePost(id int64) error
 	LikePost(userID, postID int64) error
 	UnLikePost(userID, postID int64) error
+	CountPostLikes(postID int64) (int, error)
 }
 
 type postService struct {
@@ -47,4 +48,8 @@ func (s *postService) LikePost(userID, postID int64) error {
 
 func (s *postService) UnLikePost(userID, postID int64) error {
 	return s.repo.UnLikePost(userID, postID)
+}
+
+func (s *postService) CountPostLikes(postID int64) (int, error) {
+	return s.repo.CountPostLikes(postID)
 }

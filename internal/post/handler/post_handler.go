@@ -7,7 +7,6 @@ import (
 	"github.com/Reza-Rayan/twitter-like-app/dto"
 	"github.com/Reza-Rayan/twitter-like-app/internal/post"
 	"github.com/Reza-Rayan/twitter-like-app/internal/post/service"
-	"github.com/Reza-Rayan/twitter-like-app/models"
 	"github.com/Reza-Rayan/twitter-like-app/utils"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
@@ -95,7 +94,7 @@ func (h *PostHandler) GetAllPosts(ctx *gin.Context) {
 		}
 	}
 	// Cache miss: Get from DB
-	posts, totalCount, err := models.GetAllPosts(limit, offset)
+	posts, totalCount, err := h.service.GetPosts(limit, offset)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
 			"message": "Failed to fetch post",
@@ -131,7 +130,7 @@ func (h *PostHandler) GetPostByID(ctx *gin.Context) {
 		})
 		return
 	}
-	post, err := models.GetPostByID(postId)
+	post, err := h.service.GetPost(postId)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
 			"message": "Failed to get post",
@@ -140,7 +139,7 @@ func (h *PostHandler) GetPostByID(ctx *gin.Context) {
 		return
 	}
 	// Get post likes
-	count, err := models.CountPostLikes(postId)
+	count, err := h.service.CountPostLikes(postId)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
 			"message": "Failed to get post likes",
