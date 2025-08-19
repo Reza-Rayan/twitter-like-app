@@ -152,3 +152,23 @@ func (h *UserHandler) UpdateProfile(ctx *gin.Context) {
 	}
 	ctx.JSON(http.StatusOK, gin.H{"message": "Profile updated successfully", "user": user})
 }
+
+// GenerateOTP -> POST method
+func (h *UserHandler) GenerateOTP(ctx *gin.Context) {
+	type request struct {
+		Email string `json:"email" binding:"required,email"`
+	}
+	var formRequest request
+	if err := ctx.ShouldBindJSON(&formRequest); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	_, err := h.service.GenerateOTP(formRequest.Email)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"message": "OTP sent successfully"})
+}

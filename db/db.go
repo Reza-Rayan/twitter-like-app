@@ -106,18 +106,18 @@ func createTables() {
 		panic(fmt.Sprintf("Could not create likes table: %v", err))
 	}
 
-	createMessagesTable := `
-	CREATE TABLE IF NOT EXISTS messages (
+	createOTPsTable := `
+	CREATE TABLE IF NOT EXISTS user_otps (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
-		sender_id INTEGER NOT NULL,
-		receiver_id INTEGER NOT NULL,
-		content TEXT NOT NULL,
-		sent_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-		FOREIGN KEY (sender_id) REFERENCES users(id),
-		FOREIGN KEY (receiver_id) REFERENCES users(id)
-	);`
-	_, err = DB.Exec(createMessagesTable)
+		user_id INTEGER NOT NULL,
+		otp_code TEXT NOT NULL,
+		expires_at DATETIME NOT NULL,
+		FOREIGN KEY(user_id) REFERENCES users(id)
+	);
+	`
+	_, err = DB.Exec(createOTPsTable)
 	if err != nil {
-		panic(fmt.Sprintf("Could not create messages table: %v", err))
+		panic(fmt.Sprintf("Could not create user_otps table: %v", err))
 	}
+
 }

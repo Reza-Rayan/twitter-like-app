@@ -5,6 +5,7 @@ import (
 	"errors"
 	"github.com/Reza-Rayan/twitter-like-app/internal/user"
 	"github.com/Reza-Rayan/twitter-like-app/utils"
+	"time"
 )
 
 type UserRepository interface {
@@ -15,6 +16,9 @@ type UserRepository interface {
 	UpdateProfile(u *user.User) error
 	FollowUser(user.Follow) error
 	UnfollowUser(userID int64, unfollowID int64) error
+	FindUserByEmail(email string) (*user.User, error)
+	SaveOTP(userID int64, otp string, expiresAt time.Time) error
+	//VerifyOTP(email, otp string) (*user.User, error)
 }
 
 type userRepo struct {
@@ -97,5 +101,23 @@ func (r *userRepo) UpdateProfile(u *user.User) error {
 	}
 
 	_, err = r.db.Exec(query, u.Email, u.Username, hashedPassword, u.ID)
+	return err
+}
+
+// FindUserByEmail -> POST method
+func (r *userRepo) FindUserByEmail(email string) (*user.User, error) {
+	query := `SELECT id, email FROM  users WHERE  email = ?`
+
+	var u user.User
+	err := r.db.QueryRow(query, email).Scan(&u.ID, &u.Email)
+	if err != nil {
+		return nil, err
+	}
+	return &u, nil
+}
+
+func (r *userRepo) SaveOTP(userID int64, otp string, expiresAt time.Time) error {
+	query := `INSERT INTO user_otps (user_id, otp_code, expires_at) VALUES (?, ?, ?)`
+	_, err := r.db.Exec(query, userID, otp, expiresAt)
 	return err
 }
