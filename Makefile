@@ -19,3 +19,18 @@ start: build
 .PHONY: clean
 clean:
 	rm -rf bin
+
+
+# Migrations
+migrate-new:
+	@migrate create -ext sql -dir $(MIGRATIONS_DIR) -seq $(name)
+
+migrate-up:
+	@migrate -database "$(DB_URL)" -path $(MIGRATIONS_DIR) up
+
+migrate-down:
+	@migrate -database "$(DB_URL)" -path $(MIGRATIONS_DIR) down 1
+
+migrate-reset:
+	@migrate -database "$(DB_URL)" -path $(MIGRATIONS_DIR) drop -f
+
