@@ -25,6 +25,7 @@ func InitDB() {
 }
 
 func createTables() {
+	// Users table
 	createUsersTable := `
 	CREATE TABLE IF NOT EXISTS users (
     	id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -39,6 +40,7 @@ func createTables() {
 		panic(fmt.Sprintf("Could not create users table: %v", err))
 	}
 
+	// Posts table
 	createPostsTable := `
 	CREATE TABLE IF NOT EXISTS post (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -56,6 +58,7 @@ func createTables() {
 		panic(fmt.Sprintf("Could not create post table: %v", err))
 	}
 
+	// Followers table
 	createFollowersTable := `
 	CREATE TABLE IF NOT EXISTS follows (
 		follower_id INTEGER NOT NULL,
@@ -70,6 +73,7 @@ func createTables() {
 		panic(fmt.Sprintf("Could not create followers table: %v", err))
 	}
 
+	// notification table
 	createNotificationsTable := `
 	CREATE TABLE IF NOT EXISTS notifications (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -90,6 +94,7 @@ func createTables() {
 		panic(fmt.Sprintf("Could not create notifications table: %v", err))
 	}
 
+	// Like table
 	createLikesTable := `
 	CREATE TABLE IF NOT EXISTS likes (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -106,6 +111,7 @@ func createTables() {
 		panic(fmt.Sprintf("Could not create likes table: %v", err))
 	}
 
+	// OTP table
 	createOTPsTable := `
 	CREATE TABLE IF NOT EXISTS user_otps (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -120,4 +126,14 @@ func createTables() {
 		panic(fmt.Sprintf("Could not create user_otps table: %v", err))
 	}
 
+	createRolesTable := `
+	CREATE TABLE IF NOT EXISTS roles (
+    	id INTEGER PRIMARY KEY AUTOINCREMENT,
+     	name TEXT NOT NULL UNIQUE
+	);
+	`
+	_, err = DB.Exec(createRolesTable)
+	if err != nil {
+		panic(fmt.Sprintf("Could not insert default roles: %v", err))
+	}
 }

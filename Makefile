@@ -1,4 +1,7 @@
 APP_NAME=twitter-like-app
+MIGRATE=migrate
+DB_FILE=./twitter.db
+MIGRATIONS=./migrations
 
 # Default target
 .PHONY: run
@@ -23,13 +26,13 @@ clean:
 
 # Migrations
 migrate-new:
-	@migrate create -ext sql -dir $(MIGRATIONS_DIR) -seq $(name)
+	$(MIGRATE) create -ext sql -dir $(MIGRATIONS) $(NAME)
 
 migrate-up:
-	@migrate -database "$(DB_URL)" -path $(MIGRATIONS_DIR) up
+	$(MIGRATE) -path $(MIGRATIONS) -database sqlite://$(DB_FILE) up
 
 migrate-down:
-	@migrate -database "$(DB_URL)" -path $(MIGRATIONS_DIR) down 1
+	$(MIGRATE) -path $(MIGRATIONS) -database sqlite3://$(DB_FILE) down -all
 
 migrate-reset:
 	@migrate -database "$(DB_URL)" -path $(MIGRATIONS_DIR) drop -f
