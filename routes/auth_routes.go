@@ -8,16 +8,14 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func RegisterUserRoutes(router *gin.RouterGroup, db *sql.DB) {
+func RegisterAuthRoutes(router *gin.RouterGroup, db *sql.DB) {
+
 	repo := userRepo.NewUserRepository(db)
 	service := userService.NewUserService(repo)
 	h := handler.NewUserHandler(service)
 
-	router.GET("/profile", h.GetUserProfile)
-	router.PATCH("/profile/update-avatar", h.UpdateUserAvatar)
-	router.PUT("/profile", h.UpdateProfile)
+	router.POST("/signup", h.Signup)
+	router.POST("/login", h.Login)
+	router.POST("/send-otp", h.GenerateOTP)
 
-	//	Follow && Unfollow User
-	router.POST("/follow/:id", h.FollowUser)
-	router.DELETE("/unfollow/:id", h.UnfollowUser)
 }

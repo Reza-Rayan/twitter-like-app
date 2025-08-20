@@ -14,6 +14,9 @@ func RegisterRoutes(server *gin.Engine, db *sql.DB) {
 	// Posts Routes -> v1/post/*
 	RegisterPostRoutes(authenticated, db)
 
+	// Auth Routes -> v1/login && v1/signup && v1/send-otp & v1/verify-otp
+	RegisterAuthRoutes(router, db)
+
 	//	Users Routes -> v1/register && v1/login && v1/profile/* && v1/follow && v1/unfollow
 	RegisterUserRoutes(authenticated, db)
 
