@@ -41,24 +41,18 @@
 						{
 							"name": "unlike",
 							"request": {
-								"method": "POST",
+								"method": "DELETE",
 								"header": [],
 								"url": {
-									"raw": "{{web_url}}/{{version}}/posts/:id/like",
+									"raw": "{{web_url}}/{{version}}/posts/1/like",
 									"host": [
 										"{{web_url}}"
 									],
 									"path": [
 										"{{version}}",
 										"posts",
-										":id",
+										"1",
 										"like"
-									],
-									"variable": [
-										{
-											"key": "id",
-											"value": ""
-										}
 									]
 								}
 							},
@@ -72,14 +66,14 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{web_url}}/{{version}}/posts/15",
+							"raw": "{{web_url}}/{{version}}/posts/1",
 							"host": [
 								"{{web_url}}"
 							],
 							"path": [
 								"{{version}}",
 								"posts",
-								"15"
+								"1"
 							]
 						}
 					},
@@ -237,7 +231,7 @@
 					"response": []
 				},
 				{
-					"name": "Login",
+					"name": "Login With Password",
 					"request": {
 						"method": "POST",
 						"header": [],
@@ -258,6 +252,33 @@
 							"path": [
 								"{{version}}",
 								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Send OTP",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\":\"reza@gmail.com\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{web_url}}/{{version}}/send-otp",
+							"host": [
+								"{{web_url}}"
+							],
+							"path": [
+								"{{version}}",
+								"send-otp"
 							]
 						}
 					},
@@ -464,18 +485,15 @@
 	"variable": [
 		{
 			"key": "web_url",
-			"value": "http://localhost:5050",
-			"type": "string"
+			"value": "http://localhost:5050"
 		},
 		{
 			"key": "version",
-			"value": "1v",
-			"type": "string"
+			"value": "v1"
 		},
 		{
 			"key": "token",
-			"value": "",
-			"type": "string"
+			"value": ""
 		}
 	]
 }
