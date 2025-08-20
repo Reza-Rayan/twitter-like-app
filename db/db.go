@@ -40,7 +40,7 @@ func createTables() {
 	}
 
 	createPostsTable := `
-	CREATE TABLE IF NOT EXISTS posts (
+	CREATE TABLE IF NOT EXISTS post (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
 		title TEXT NOT NULL,
 		content TEXT NOT NULL,
@@ -53,7 +53,7 @@ func createTables() {
 
 	_, err = DB.Exec(createPostsTable)
 	if err != nil {
-		panic(fmt.Sprintf("Could not create posts table: %v", err))
+		panic(fmt.Sprintf("Could not create post table: %v", err))
 	}
 
 	createFollowersTable := `
@@ -82,7 +82,7 @@ func createTables() {
 		is_read BOOLEAN DEFAULT 0,
 		FOREIGN KEY (recipient_id) REFERENCES users(id),
 		FOREIGN KEY (sender_id) REFERENCES users(id),
-		FOREIGN KEY (post_id) REFERENCES posts(id)
+		FOREIGN KEY (post_id) REFERENCES post(id)
 	);
 	`
 	_, err = DB.Exec(createNotificationsTable)
@@ -98,7 +98,7 @@ func createTables() {
 		created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 		UNIQUE(user_id, post_id),
 		FOREIGN KEY(user_id) REFERENCES users(id),
-		FOREIGN KEY(post_id) REFERENCES posts(id)
+		FOREIGN KEY(post_id) REFERENCES post(id)
 	);
 	`
 	_, err = DB.Exec(createLikesTable)
@@ -106,18 +106,18 @@ func createTables() {
 		panic(fmt.Sprintf("Could not create likes table: %v", err))
 	}
 
-	createMessagesTable := `
-	CREATE TABLE IF NOT EXISTS messages (
+	createOTPsTable := `
+	CREATE TABLE IF NOT EXISTS user_otps (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
-		sender_id INTEGER NOT NULL,
-		receiver_id INTEGER NOT NULL,
-		content TEXT NOT NULL,
-		sent_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-		FOREIGN KEY (sender_id) REFERENCES users(id),
-		FOREIGN KEY (receiver_id) REFERENCES users(id)
-	);`
-	_, err = DB.Exec(createMessagesTable)
+		user_id INTEGER NOT NULL,
+		otp_code TEXT NOT NULL,
+		expires_at DATETIME NOT NULL,
+		FOREIGN KEY(user_id) REFERENCES users(id)
+	);
+	`
+	_, err = DB.Exec(createOTPsTable)
 	if err != nil {
-		panic(fmt.Sprintf("Could not create messages table: %v", err))
+		panic(fmt.Sprintf("Could not create user_otps table: %v", err))
 	}
+
 }

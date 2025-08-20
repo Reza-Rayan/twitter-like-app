@@ -20,7 +20,7 @@ func DeleteCache(key string) error {
 }
 
 func ClearPostsCache() error {
-	keys, err := Redis.Keys(Ctx, "posts:*").Result()
+	keys, err := Redis.Keys(Ctx, "post:*").Result()
 	if err != nil {
 		return err
 	}
