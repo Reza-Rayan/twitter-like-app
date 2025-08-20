@@ -7,7 +7,6 @@ import (
 	"github.com/Reza-Rayan/twitter-like-app/internal/user/service"
 	"github.com/Reza-Rayan/twitter-like-app/utils"
 	"github.com/gin-gonic/gin"
-	"log"
 	"net/http"
 	"time"
 )
@@ -185,8 +184,6 @@ func (h *UserHandler) VerifyOTP(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	log.Println("-------------------------------------")
-	log.Println(formInput)
 	user, err := h.service.VerifyOTP(formInput.Email, formInput.OTP)
 	if err != nil {
 		ctx.JSON(http.StatusUnauthorized, gin.H{"message": "Invalid or expired OTP", "error": err.Error()})
