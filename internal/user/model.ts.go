@@ -9,6 +9,7 @@ type User struct {
 	Password  string `binding:"required"`
 	CreatedAt time.Time
 	Avatar    string
+	RoleID    int64 `default:"1"`
 }
 
 type Follow struct {

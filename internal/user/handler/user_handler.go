@@ -32,6 +32,7 @@ func (h *UserHandler) Signup(ctx *gin.Context) {
 		Password:  formRequest.Password,
 		Username:  formRequest.Username,
 		CreatedAt: time.Now(),
+		RoleID:    1,
 	}
 	err := h.service.Signup(&newUser)
 	if err != nil {
