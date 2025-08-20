@@ -8,10 +8,11 @@ import (
 
 const secretKey = "mySecretKey1234!@#$"
 
-func GenerateToken(email string, userId int64) (string, error) {
+func GenerateToken(email string, userId int64, role int64) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"email":  email,
 		"userId": userId,
+		"roleId": role,
 		"exp":    time.Now().Add(time.Hour * 72).Unix(), // 3 days
 	})
 

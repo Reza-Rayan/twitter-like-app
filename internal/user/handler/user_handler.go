@@ -60,7 +60,7 @@ func (h *UserHandler) Login(ctx *gin.Context) {
 		ctx.JSON(http.StatusUnauthorized, gin.H{"message": "Invalid credentials", "error": err.Error()})
 		return
 	}
-	token, err := utils.GenerateToken(user.Email, user.ID)
+	token, err := utils.GenerateToken(user.Email, user.ID, user.RoleID)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"message": "Failed to generate token", "error": err.Error()})
 		return
@@ -190,7 +190,7 @@ func (h *UserHandler) VerifyOTP(ctx *gin.Context) {
 		ctx.JSON(http.StatusUnauthorized, gin.H{"message": "Invalid or expired OTP", "error": err.Error()})
 		return
 	}
-	token, err := utils.GenerateToken(user.Email, user.ID)
+	token, err := utils.GenerateToken(user.Email, user.ID, user.RoleID)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate token"})
 		return
