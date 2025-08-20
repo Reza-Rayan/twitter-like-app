@@ -31,7 +31,7 @@ func NewUserRepository(db *sql.DB) UserRepository {
 
 // Save -> POST method
 func (r *userRepo) Save(u *user.User) error {
-	query := `INSERT INTO users (email, password, username, role_id) VALUES (?, ?, ?, ?)`
+	query := `INSERT INTO users (email, password, username, role_id, phone) VALUES (?, ?, ?, ?, ?)`
 
 	stmt, err := r.db.Prepare(query)
 	if err != nil {
@@ -43,7 +43,7 @@ func (r *userRepo) Save(u *user.User) error {
 	if err != nil {
 		return err
 	}
-	result, err := stmt.Exec(u.Email, hashedPassword, u.Username, u.RoleID)
+	result, err := stmt.Exec(u.Email, hashedPassword, u.Username, u.RoleID, u.Phone)
 	if err != nil {
 		return err
 	}

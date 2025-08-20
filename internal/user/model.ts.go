@@ -10,6 +10,7 @@ type User struct {
 	CreatedAt time.Time
 	Avatar    string
 	RoleID    int64 `default:"1"`
+	Phone     string
 }
 
 type Follow struct {
