@@ -18,7 +18,7 @@ type UserRepository interface {
 	UnfollowUser(userID int64, unfollowID int64) error
 	FindUserByEmail(email string) (*user.User, error)
 	SaveOTP(userID int64, otp string, expiresAt time.Time) error
-	//VerifyOTP(email, otp string) (*user.User, error)
+	CheckOTP(userID int64, otp string) (bool, error)
 }
 
 type userRepo struct {
@@ -116,8 +116,24 @@ func (r *userRepo) FindUserByEmail(email string) (*user.User, error) {
 	return &u, nil
 }
 
+// SaveOTP -> POST method
 func (r *userRepo) SaveOTP(userID int64, otp string, expiresAt time.Time) error {
 	query := `INSERT INTO user_otps (user_id, otp_code, expires_at) VALUES (?, ?, ?)`
 	_, err := r.db.Exec(query, userID, otp, expiresAt)
 	return err
+}
+
+// CheckOTP -> POST method
+func (r *userRepo) CheckOTP(userID int64, otp string) (bool, error) {
+	query := `SELECT expires_at FROM user_otps WHERE user_id = ? AND otp_code = ? ORDER BY id DESC LIMIT 1`
+	var expiresAt time.Time
+	err := r.db.QueryRow(query, userID, otp).Scan(&expiresAt)
+	if err != nil {
+		return false, err
+	}
+	if time.Now().After(expiresAt) {
+		return false, err
+	}
+
+	return true, nil
 }

@@ -7,6 +7,7 @@ import (
 	"github.com/Reza-Rayan/twitter-like-app/internal/user/service"
 	"github.com/Reza-Rayan/twitter-like-app/utils"
 	"github.com/gin-gonic/gin"
+	"log"
 	"net/http"
 	"time"
 )
@@ -172,4 +173,33 @@ func (h *UserHandler) GenerateOTP(ctx *gin.Context) {
 		return
 	}
 	ctx.JSON(http.StatusOK, gin.H{"message": "OTP sent successfully"})
+}
+
+func (h *UserHandler) VerifyOTP(ctx *gin.Context) {
+	type request struct {
+		Email string `json:"email" binding:"required,email"`
+		OTP   string `json:"otp" binding:"required"`
+	}
+	var formInput request
+	if err := ctx.ShouldBindJSON(&formInput); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	log.Println("-------------------------------------")
+	log.Println(formInput)
+	user, err := h.service.VerifyOTP(formInput.Email, formInput.OTP)
+	if err != nil {
+		ctx.JSON(http.StatusUnauthorized, gin.H{"message": "Invalid or expired OTP", "error": err.Error()})
+		return
+	}
+	token, err := utils.GenerateToken(user.Email, user.ID)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate token"})
+		return
+	}
+	ctx.JSON(http.StatusOK, gin.H{
+		"message": "Logged in successfully with OTP",
+		"token":   token,
+		"user":    user,
+	})
 }

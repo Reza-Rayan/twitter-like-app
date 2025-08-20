@@ -17,7 +17,7 @@ type UserService interface {
 
 	Login(u *user.User) error
 	GenerateOTP(email string) (string, error)
-	//VerifyOTP(email, otp string) (*user.User, error)
+	VerifyOTP(email, otp string) (*user.User, error)
 }
 
 type userService struct {
@@ -64,4 +64,16 @@ func (s *userService) GenerateOTP(email string) (string, error) {
 	go utils.SendOTPEmail(user.Email, otp)
 
 	return otp, nil
+}
+
+func (s *userService) VerifyOTP(email, otp string) (*user.User, error) {
+	user, err := s.repo.FindUserByEmail(email)
+	if err != nil {
+		return nil, err
+	}
+	ok, err := s.repo.CheckOTP(user.ID, otp)
+	if err != nil || !ok {
+		return nil, err
+	}
+	return user, nil
 }
