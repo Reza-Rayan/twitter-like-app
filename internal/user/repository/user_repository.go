@@ -54,11 +54,11 @@ func (r *userRepo) Save(u *user.User) error {
 
 // Login -> POST method
 func (r *userRepo) Login(u *user.User) error {
-	query := `SELECT id, password FROM users WHERE email = ?`
+	query := `SELECT id, password, role_id FROM users WHERE email = ?`
 	row := r.db.QueryRow(query, u.Email)
 
 	var retrievedPassword string
-	err := row.Scan(&u.ID, &retrievedPassword)
+	err := row.Scan(&u.ID, &retrievedPassword, &u.RoleID)
 	if err != nil {
 		return err
 	}

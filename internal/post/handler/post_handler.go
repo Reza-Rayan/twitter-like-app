@@ -26,6 +26,14 @@ func NewPostHandler(s service.PostService) *PostHandler {
 // CreatePost -> POST method
 func (h *PostHandler) CreatePost(ctx *gin.Context) {
 	userId := ctx.GetInt64("userId")
+	roleId := ctx.GetInt64("roleId")
+
+	if roleId != 2 {
+		ctx.JSON(http.StatusUnauthorized, gin.H{
+			"message": "Forbidden access to this route",
+		})
+		return
+	}
 
 	var postRequest dto.CreatePostRequest
 	if err := ctx.ShouldBind(&postRequest); err != nil {
