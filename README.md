@@ -19,27 +19,6 @@ A minimalistic Twitter-like REST API built with Golang and Gin. This backend app
 - Configurable via `config.yaml` using Viper
 - Modular folder structure (routes, models, db, middlewares)
 
-## 📁 Folder Structure
-ttwitter-like-app/
-├── config/             # Application configuration using Viper
-│   └── config.go
-├── db/                 # Database initialization and schema
-│   └── db.go
-├── middlewares/        # Custom middleware (e.g., JWT auth)
-│   └── auth.go
-├── models/             # Database models and logic
-│   ├── user.go
-│   ├── post.go
-│   └── follow.go
-├── routes/             # API route handlers
-│   └── routes.go
-├── config.yaml         # YAML-based application configuration
-├── .air.toml           # Air config for hot reload
-├── go.mod
-├── go.sum
-└── main.go             # App entry point
-
-
 ## 🚀 Getting Started
 
 1. Clone the repository:
@@ -51,10 +30,7 @@ ttwitter-like-app/
    ```bash
    go mod tidy
 
-3. Install air package fo running
-   ```bash
-   go install github.com/cosmtrek/air@latest
 
-4. Run Project
+3. Run Project 
    ```bash
-   air
+   make run
