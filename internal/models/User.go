@@ -3,7 +3,7 @@ package models
 import "time"
 
 type User struct {
-	ID        uint   `gorm:"primaryKey"`
+	ID        int64  `gorm:"primaryKey"`
 	Email     string `gorm:"unique;not null"`
 	Password  string `gorm:"not null"`
 	Username  string
@@ -15,8 +15,8 @@ type User struct {
 }
 
 type Follow struct {
-	FollowerID uint `gorm:"primaryKey"`
-	FolloweeID uint `gorm:"primaryKey"`
+	FollowerID int64 `gorm:"primaryKey"`
+	FolloweeID int64 `gorm:"primaryKey"`
 }
 
 type PublicUser struct {

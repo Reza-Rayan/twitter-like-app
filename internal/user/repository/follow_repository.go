@@ -2,22 +2,19 @@ package repository
 
 import (
 	"errors"
-	"github.com/Reza-Rayan/twitter-like-app/internal/user"
+	"github.com/Reza-Rayan/twitter-like-app/db"
+	"github.com/Reza-Rayan/twitter-like-app/internal/models"
 )
 
 // FollowUser -> POST method
-func (r *userRepo) FollowUser(f user.Follow) error {
+func (r *userRepo) FollowUser(f models.Follow) error {
 	if f.FollowerID == f.FolloweeID {
 		return errors.New("cannot follow yourself")
 	}
-	query := `INSERT OR IGNORE INTO follows (follower_id, followee_id) VALUES (?, ?)`
-	_, err := r.db.Exec(query, f.FollowerID, f.FolloweeID)
-	return err
+	return db.DB.Create(&f).Error
 }
 
 // UnfollowUser -> DELETE method
-func (r *userRepo) UnfollowUser(userID int64, unfollowID int64) error {
-	query := `DELETE FROM follows WHERE follower_id = ? AND followee_id = ?`
-	_, err := r.db.Exec(query, userID, unfollowID)
-	return err
+func (r *userRepo) UnfollowUser(userID, unfollowID uint) error {
+	return db.DB.Delete(&models.Follow{}, "follower_id = ? AND followee_id = ?", userID, unfollowID).Error
 }
