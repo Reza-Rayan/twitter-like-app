@@ -1,7 +1,7 @@
 package handler
 
 import (
-	"github.com/Reza-Rayan/twitter-like-app/internal/user"
+	"github.com/Reza-Rayan/twitter-like-app/internal/models"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
@@ -16,7 +16,7 @@ func (h *UserHandler) FollowUser(ctx *gin.Context) {
 		return
 	}
 
-	follow := user.Follow{
+	follow := models.Follow{
 		FollowerID: followerID,
 		FolloweeID: followeeID,
 	}

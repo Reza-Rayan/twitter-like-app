@@ -9,7 +9,7 @@ type User struct {
 	Username  string
 	Avatar    string
 	Phone     string
-	RoleID    uint
+	RoleID    int64
 	Role      Role
 	CreatedAt time.Time
 }

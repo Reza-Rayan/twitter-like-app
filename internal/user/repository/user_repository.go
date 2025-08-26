@@ -11,14 +11,14 @@ import (
 type UserRepository interface {
 	Save(u *models.User) error
 	Login(email, password string) (*models.User, error)
-	GetUserProfile(id uint) (*models.User, error)
-	UpdateUserAvatar(userID uint, avatarURL string) error
+	GetUserProfile(id int64) (*models.User, error)
+	UpdateUserAvatar(userID int64, avatarURL string) error
 	UpdateProfile(u *models.User) error
 	FollowUser(f models.Follow) error
-	UnfollowUser(userID, unfollowID uint) error
+	UnfollowUser(userID, unfollowID int64) error
 	FindUserByEmail(email string) (*models.User, error)
-	SaveOTP(userID uint, otp string, expiresAt time.Time) error
-	CheckOTP(userID uint, otp string) (bool, error)
+	SaveOTP(userID int64, otp string, expiresAt time.Time) error
+	CheckOTP(userID int64, otp string) (bool, error)
 }
 
 type userRepo struct{}
@@ -50,7 +50,7 @@ func (r *userRepo) Login(email, password string) (*models.User, error) {
 }
 
 // GetUserProfile -> GET method
-func (r *userRepo) GetUserProfile(id uint) (*models.User, error) {
+func (r *userRepo) GetUserProfile(id int64) (*models.User, error) {
 	var user models.User
 	if err := db.DB.First(&user, id).Error; err != nil {
 		return nil, err
@@ -59,7 +59,7 @@ func (r *userRepo) GetUserProfile(id uint) (*models.User, error) {
 }
 
 // UpdateUserAvatar -> PATCH method
-func (r *userRepo) UpdateUserAvatar(userID uint, avatarURL string) error {
+func (r *userRepo) UpdateUserAvatar(userID int64, avatarURL string) error {
 	return db.DB.Model(&models.User{}).Where("id = ?", userID).Update("avatar", avatarURL).Error
 }
 
@@ -82,14 +82,14 @@ func (r *userRepo) FindUserByEmail(email string) (*models.User, error) {
 }
 
 // SaveOTP -> POST method
-func (r *userRepo) SaveOTP(userID uint, otp string, expiresAt time.Time) error {
+func (r *userRepo) SaveOTP(userID int64, otp string, expiresAt time.Time) error {
 	o := models.OTP{UserID: userID, OtpCode: otp, ExpiresAt: expiresAt}
 	return db.DB.Create(&o).Error
 }
 
 // CheckOTP -> POST method
 
-func (r *userRepo) CheckOTP(userID uint, otp string) (bool, error) {
+func (r *userRepo) CheckOTP(userID int64, otp string) (bool, error) {
 	var o models.OTP
 	if err := db.DB.Where("user_id = ? AND otp_code = ?", userID, otp).
 		Order("id desc").First(&o).Error; err != nil {

@@ -15,6 +15,6 @@ func (r *userRepo) FollowUser(f models.Follow) error {
 }
 
 // UnfollowUser -> DELETE method
-func (r *userRepo) UnfollowUser(userID, unfollowID uint) error {
+func (r *userRepo) UnfollowUser(userID, unfollowID int64) error {
 	return db.DB.Delete(&models.Follow{}, "follower_id = ? AND followee_id = ?", userID, unfollowID).Error
 }

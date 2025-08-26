@@ -18,7 +18,7 @@ func RegisterRoutes(server *gin.Engine, db *sql.DB) {
 	RegisterAuthRoutes(router, db)
 
 	//	Users Routes -> v1/register && v1/login && v1/profile/* && v1/follow && v1/unfollow
-	RegisterUserRoutes(authenticated, db)
+	RegisterUserRoutes(authenticated)
 
 	//	Notifications
 	RegisterNotificationRoutes(authenticated, db)
