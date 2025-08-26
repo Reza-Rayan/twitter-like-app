@@ -20,7 +20,7 @@ func main() {
 	config.LoadConfig()
 	db.InitDB()
 	server := gin.Default()
-	routes.RegisterRoutes(server, db.DB)
+	routes.RegisterRoutes(server)
 
 	// Apply Prometheus middleware globally
 	server.Use(middlewares.PrometheusMiddleware())
@@ -65,9 +65,9 @@ func main() {
 	}
 
 	// Close DB (important)
-	if db.DB != nil {
-		_ = db.DB.Close()
-		log.Println("📦 Database connection closed")
+	sqlDB, err := db.DB.DB()
+	if err == nil {
+		_ = sqlDB.Close()
 	}
 
 	log.Println("🚀 Server exited properly")

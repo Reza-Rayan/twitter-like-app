@@ -3,14 +3,14 @@ package models
 import "time"
 
 type Post struct {
-	ID        int64  `gorm:"primaryKey"`
-	Title     string `gorm:"not null"`
-	Content   string `gorm:"not null"`
-	CreatedAt time.Time
-	UserID    int64
-	User      User
-	Image     *string
-	Likes     []Like
+	ID        int64     `gorm:"primaryKey" json:"id"`
+	Title     string    `gorm:"not null" json:"title"`
+	Content   string    `gorm:"not null" json:"content"`
+	CreatedAt time.Time `json:"created_at"`
+	UserID    int64     `json:"user_id"`
+	User      User      `gorm:"foreignKey:UserID" json:"user"`
+	Image     *string   `json:"image,omitempty"`
+	Likes     []Like    `json:"likes"`
 }
 
 type PostWithLikes struct {

@@ -8,6 +8,7 @@ import (
 type NotifyService interface {
 	Save(notification *notification.Notification) error
 	GetUserNotifications(userID int64) ([]notification.Notification, error)
+	MarkAsRead(notificationID int64) error
 }
 
 type notifyService struct {
@@ -24,4 +25,8 @@ func (s *notifyService) Save(notification *notification.Notification) error {
 
 func (s *notifyService) GetUserNotifications(userID int64) ([]notification.Notification, error) {
 	return s.repo.GetUserNotifications(userID)
+}
+
+func (s *notifyService) MarkAsRead(notificationID int64) error {
+	return s.repo.MarkAsRead(notificationID)
 }
