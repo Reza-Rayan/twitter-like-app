@@ -25,22 +25,26 @@ func NewPostRepository() PostRepository {
 	return &postRepository{}
 }
 
+// Create -> POST method
 func (r *postRepository) Create(post *models.Post) error {
 	return db.DB.Create(post).Error
 }
 
+// FindAll -> GET method
 func (r *postRepository) FindAll() ([]models.Post, error) {
 	var posts []models.Post
 	err := db.DB.Preload("User").Preload("Likes").Find(&posts).Error
 	return posts, err
 }
 
+// FindByID -> GET method
 func (r *postRepository) FindByID(id int64) (models.Post, error) {
 	var post models.Post
 	err := db.DB.Preload("User").Preload("Likes").First(&post, id).Error
 	return post, err
 }
 
+// Update -> PUT method
 func (r *postRepository) Update(post *models.Post) error {
 	return db.DB.Save(post).Error
 }
@@ -59,6 +63,7 @@ func (r *postRepository) GetPostsWithLikes() ([]models.PostWithLikes, error) {
 	return result, err
 }
 
+// LikePost -> POST method
 func (r *postRepository) LikePost(userID, postID int64) error {
 	like := models.Like{
 		UserID: userID,
@@ -67,6 +72,7 @@ func (r *postRepository) LikePost(userID, postID int64) error {
 	return db.DB.Create(&like).Error
 }
 
+// UnlikePost -> DELETE method
 func (r *postRepository) UnlikePost(userID, postID int64) error {
 	return db.DB.Where("user_id = ? AND post_id = ?", userID, postID).Delete(&models.Like{}).Error
 }
