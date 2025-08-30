@@ -28,6 +28,7 @@ func InitDB() {
 		&models.Like{},
 		&models.OTP{},
 		&models.Role{},
+		&models.Message{},
 	)
 	if err != nil {
 		panic(fmt.Sprintf("Migration failed: %v", err))

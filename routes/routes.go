@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"github.com/Reza-Rayan/twitter-like-app/internal/websocket"
 	"github.com/Reza-Rayan/twitter-like-app/middlewares"
 	"github.com/gin-gonic/gin"
 )
@@ -21,5 +22,12 @@ func RegisterRoutes(server *gin.Engine) {
 
 	//	Notifications
 	RegisterNotificationRoutes(authenticated)
+
+	// ---- WebSocket Chat ----
+	hub := websocket.NewHub()
+	go hub.Run()
+
+	// مسیر وب‌سوکت (فقط کاربر لاگین کرده می‌تونه وصل بشه)
+	RegisterMessageRoutes(authenticated, hub)
 
 }

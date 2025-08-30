@@ -1,7 +1,6 @@
 package repository
 
 import (
-	"errors"
 	"github.com/Reza-Rayan/twitter-like-app/db"
 	"github.com/Reza-Rayan/twitter-like-app/internal/models"
 	"github.com/Reza-Rayan/twitter-like-app/utils"
