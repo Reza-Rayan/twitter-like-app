@@ -20,7 +20,7 @@ type Hub struct {
 	mu         sync.Mutex
 }
 
-// NewHub فقط یه هاب جدید می‌سازه
+// NewHub  -> Create New HUB
 func NewHub() *Hub {
 	return &Hub{
 		Clients:    make(map[int64]*Client),
@@ -30,7 +30,7 @@ func NewHub() *Hub {
 	}
 }
 
-// Run کار اصلی Event Loop رو انجام میده
+// Run -> event loop runner
 func (h *Hub) Run() {
 	for {
 		select {
