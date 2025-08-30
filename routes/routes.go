@@ -4,12 +4,19 @@ import (
 	"github.com/Reza-Rayan/twitter-like-app/internal/websocket"
 	"github.com/Reza-Rayan/twitter-like-app/middlewares"
 	"github.com/gin-gonic/gin"
+	"time"
 )
 
 func RegisterRoutes(server *gin.Engine) {
 	router := server.Group("/v1")
 	authenticated := router.Group("/")
 	authenticated.Use(middlewares.AuthMiddleware)
+
+	// --- هاب مانیتورینگ ---
+	metricsHub := websocket.NewMetricsHub(2 * time.Second) // پیش‌فرض هر 2s
+	go metricsHub.Run()                                    // مدیریت کلاینت‌های مانیتورینگ
+	go metricsHub.RunMetricsPublisher()                    // نشر دوره‌ای متریک‌ها
+	RegisterMetricsRoutes(authenticated, metricsHub)
 
 	// Posts Routes -> v1/post/*
 	RegisterPostRoutes(authenticated)
