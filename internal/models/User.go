@@ -3,20 +3,20 @@ package models
 import "time"
 
 type User struct {
-	ID        uint   `gorm:"primaryKey"`
+	ID        int64  `gorm:"primaryKey"`
 	Email     string `gorm:"unique;not null"`
 	Password  string `gorm:"not null"`
 	Username  string
 	Avatar    string
 	Phone     string
-	RoleID    uint
+	RoleID    int64
 	Role      Role
 	CreatedAt time.Time
 }
 
 type Follow struct {
-	FollowerID uint `gorm:"primaryKey"`
-	FolloweeID uint `gorm:"primaryKey"`
+	FollowerID int64 `gorm:"primaryKey"`
+	FolloweeID int64 `gorm:"primaryKey"`
 }
 
 type PublicUser struct {

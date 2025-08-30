@@ -3,8 +3,8 @@ package models
 import "time"
 
 type Like struct {
-	ID        uint `gorm:"primaryKey"`
-	UserID    uint `gorm:"uniqueIndex:idx_user_post"`
-	PostID    uint `gorm:"uniqueIndex:idx_user_post"`
+	ID        int64 `gorm:"primaryKey"`
+	UserID    int64 `gorm:"uniqueIndex:idx_user_post"`
+	PostID    int64 `gorm:"uniqueIndex:idx_user_post"`
 	CreatedAt time.Time
 }

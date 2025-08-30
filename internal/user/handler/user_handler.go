@@ -3,7 +3,7 @@ package handler
 import (
 	"fmt"
 	"github.com/Reza-Rayan/twitter-like-app/dto"
-	"github.com/Reza-Rayan/twitter-like-app/internal/user"
+	"github.com/Reza-Rayan/twitter-like-app/internal/models"
 	"github.com/Reza-Rayan/twitter-like-app/internal/user/service"
 	"github.com/Reza-Rayan/twitter-like-app/utils"
 	"github.com/gin-gonic/gin"
@@ -27,7 +27,7 @@ func (h *UserHandler) Signup(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, gin.H{"errors": errors})
 		return
 	}
-	newUser := user.User{
+	newUser := models.User{
 		Email:     formRequest.Email,
 		Password:  formRequest.Password,
 		Username:  formRequest.Username,
@@ -39,8 +39,7 @@ func (h *UserHandler) Signup(ctx *gin.Context) {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"message": "Failed to register user", "error": err.Error()})
 		return
 	}
-	ctx.JSON(http.StatusCreated, gin.H{"message": "you signed up successfully", "post": newUser})
-
+	ctx.JSON(http.StatusCreated, gin.H{"message": "you signed up successfully", "user": newUser})
 }
 
 // Login -> POST method
@@ -52,14 +51,12 @@ func (h *UserHandler) Login(ctx *gin.Context) {
 		return
 	}
 
-	user := user.User{
-		Email:    input.Email,
-		Password: input.Password,
-	}
-	if err := h.service.Login(&user); err != nil {
+	user, err := h.service.Login(input.Email, input.Password)
+	if err != nil {
 		ctx.JSON(http.StatusUnauthorized, gin.H{"message": "Invalid credentials", "error": err.Error()})
 		return
 	}
+
 	token, err := utils.GenerateToken(user.Email, user.ID, user.RoleID)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"message": "Failed to generate token", "error": err.Error()})
@@ -73,9 +70,9 @@ func (h *UserHandler) Login(ctx *gin.Context) {
 	})
 }
 
-// GetUserProfile -> POST method
+// GetUserProfile -> GET method
 func (h *UserHandler) GetUserProfile(ctx *gin.Context) {
-	userID := ctx.GetInt64("userId")
+	userID := int64(ctx.GetInt("userId"))
 
 	profile, err := h.service.GetUserProfile(userID)
 	if err != nil {
@@ -86,12 +83,11 @@ func (h *UserHandler) GetUserProfile(ctx *gin.Context) {
 		"message": "User profile fetched successfully",
 		"profile": profile,
 	})
-
 }
 
 // UpdateUserAvatar -> PATCH method
 func (h *UserHandler) UpdateUserAvatar(ctx *gin.Context) {
-	userID := ctx.GetInt64("userId")
+	userID := int64(ctx.GetInt("userId"))
 
 	file, err := ctx.FormFile("avatar")
 	if err != nil {
@@ -100,8 +96,7 @@ func (h *UserHandler) UpdateUserAvatar(ctx *gin.Context) {
 	}
 
 	uploadPath := fmt.Sprintf("uploads/avatars/%d_%s", userID, file.Filename)
-	err = ctx.SaveUploadedFile(file, uploadPath)
-	if err != nil {
+	if err := ctx.SaveUploadedFile(file, uploadPath); err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"message": "Failed to save avatar", "error": err.Error()})
 		return
 	}
@@ -109,8 +104,7 @@ func (h *UserHandler) UpdateUserAvatar(ctx *gin.Context) {
 	// full URL
 	avatarURL := fmt.Sprintf("%s:%d/%s", utils.GetBaseURL(), utils.GetPort(), uploadPath)
 
-	err = h.service.UpdateUserAvatar(userID, avatarURL)
-	if err != nil {
+	if err := h.service.UpdateUserAvatar(userID, avatarURL); err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"message": "Failed to update avatar", "error": err.Error()})
 		return
 	}
@@ -120,18 +114,18 @@ func (h *UserHandler) UpdateUserAvatar(ctx *gin.Context) {
 
 // UpdateProfile -> PUT method
 func (h *UserHandler) UpdateProfile(ctx *gin.Context) {
-	userId := ctx.GetInt64("userId")
-	// Get form values
+	userID := int64(ctx.GetInt("userId"))
+
 	email := ctx.PostForm("email")
 	username := ctx.PostForm("username")
 	password := ctx.PostForm("password")
 
-	user, err := h.service.GetUserProfile(userId)
-
+	user, err := h.service.GetUserProfile(userID)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"message": "User not found", "error": err.Error()})
 		return
 	}
+
 	if email != "" {
 		user.Email = email
 	}
@@ -167,7 +161,6 @@ func (h *UserHandler) GenerateOTP(ctx *gin.Context) {
 	}
 
 	_, err := h.service.GenerateOTP(formRequest.Email)
-
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -175,6 +168,7 @@ func (h *UserHandler) GenerateOTP(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{"message": "OTP sent successfully"})
 }
 
+// VerifyOTP -> POST method
 func (h *UserHandler) VerifyOTP(ctx *gin.Context) {
 	type request struct {
 		Email string `json:"email" binding:"required,email"`
@@ -185,11 +179,13 @@ func (h *UserHandler) VerifyOTP(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+
 	user, err := h.service.VerifyOTP(formInput.Email, formInput.OTP)
 	if err != nil {
 		ctx.JSON(http.StatusUnauthorized, gin.H{"message": "Invalid or expired OTP", "error": err.Error()})
 		return
 	}
+
 	token, err := utils.GenerateToken(user.Email, user.ID, user.RoleID)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate token"})

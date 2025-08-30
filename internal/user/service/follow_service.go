@@ -1,8 +1,10 @@
 package service
 
-import "github.com/Reza-Rayan/twitter-like-app/internal/user"
+import (
+	"github.com/Reza-Rayan/twitter-like-app/internal/models"
+)
 
-func (s *userService) FollowUser(follow user.Follow) error {
+func (s *userService) FollowUser(follow models.Follow) error {
 	return s.repo.FollowUser(follow)
 }
 

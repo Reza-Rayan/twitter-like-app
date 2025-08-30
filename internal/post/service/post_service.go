@@ -1,17 +1,21 @@
 package service
 
-import "github.com/Reza-Rayan/twitter-like-app/internal/post"
-import "github.com/Reza-Rayan/twitter-like-app/internal/post/repository"
+import (
+	"github.com/Reza-Rayan/twitter-like-app/internal/models"
+	"github.com/Reza-Rayan/twitter-like-app/internal/post/repository"
+)
 
 type PostService interface {
-	CreatePost(p *post.Post) error
-	GetPosts(limit, offset int) ([]post.PostWithLikes, int, error)
-	GetPost(id int64) (*post.Post, error)
-	UpdatePost(p *post.Post) error
-	DeletePost(id int64) error
+	Create(post *models.Post) error
+	GetAll() ([]models.Post, error)
+	GetByID(id int64) (models.Post, error)
+	Update(post *models.Post) error
+	Delete(id int64) error
+	GetPostsWithLikes() ([]models.PostWithLikes, error)
+
 	LikePost(userID, postID int64) error
-	UnLikePost(userID, postID int64) error
-	CountPostLikes(postID int64) (int, error)
+	UnlikePost(userID, postID int64) error
+	IsPostLiked(userID, postID int64) (bool, error)
 }
 
 type postService struct {
@@ -22,34 +26,38 @@ func NewPostService(repo repository.PostRepository) PostService {
 	return &postService{repo: repo}
 }
 
-func (s *postService) CreatePost(p *post.Post) error {
-	return s.repo.Save(p)
+func (s *postService) Create(post *models.Post) error {
+	return s.repo.Create(post)
 }
 
-func (s *postService) GetPosts(limit, offset int) ([]post.PostWithLikes, int, error) {
-	return s.repo.GetAll(limit, offset)
+func (s *postService) GetAll() ([]models.Post, error) {
+	return s.repo.FindAll()
 }
 
-func (s *postService) GetPost(id int64) (*post.Post, error) {
-	return s.repo.GetByID(id)
+func (s *postService) GetByID(id int64) (models.Post, error) {
+	return s.repo.FindByID(id)
 }
 
-func (s *postService) UpdatePost(p *post.Post) error {
-	return s.repo.Update(p)
+func (s *postService) Update(post *models.Post) error {
+	return s.repo.Update(post)
 }
 
-func (s *postService) DeletePost(id int64) error {
+func (s *postService) Delete(id int64) error {
 	return s.repo.Delete(id)
+}
+
+func (s *postService) GetPostsWithLikes() ([]models.PostWithLikes, error) {
+	return s.repo.GetPostsWithLikes()
 }
 
 func (s *postService) LikePost(userID, postID int64) error {
 	return s.repo.LikePost(userID, postID)
 }
 
-func (s *postService) UnLikePost(userID, postID int64) error {
-	return s.repo.UnLikePost(userID, postID)
+func (s *postService) UnlikePost(userID, postID int64) error {
+	return s.repo.UnlikePost(userID, postID)
 }
 
-func (s *postService) CountPostLikes(postID int64) (int, error) {
-	return s.repo.CountPostLikes(postID)
+func (s *postService) IsPostLiked(userID, postID int64) (bool, error) {
+	return s.repo.IsPostLiked(userID, postID)
 }
