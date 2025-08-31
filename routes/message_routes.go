@@ -6,7 +6,6 @@ import (
 )
 
 func RegisterMessageRoutes(router *gin.RouterGroup, hub *websocket.Hub) {
-	// ws://localhost:5050/v1/ws?user_id=1
 	router.GET("/ws", func(c *gin.Context) {
 		websocket.ServeWs(hub, c)
 	})

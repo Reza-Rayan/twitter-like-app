@@ -20,7 +20,7 @@ type Hub struct {
 	mu         sync.Mutex
 }
 
-// NewHub  -> Create New HUB
+// NewHub  -> Create New HUB if does not exists
 func NewHub() *Hub {
 	return &Hub{
 		Clients:    make(map[int64]*Client),

@@ -25,9 +25,6 @@ func main() {
 	// Apply Prometheus middleware globally
 	server.Use(middlewares.PrometheusMiddleware())
 
-	// Running CLI
-	Execute()
-
 	// Conditionally expose /metrics based on config
 	if config.AppConfig.Monitoring.Enabled {
 		server.GET(config.AppConfig.Monitoring.Path, middlewares.PrometheusHandler())

@@ -12,12 +12,6 @@ func RegisterRoutes(server *gin.Engine) {
 	authenticated := router.Group("/")
 	authenticated.Use(middlewares.AuthMiddleware)
 
-	// --- هاب مانیتورینگ ---
-	metricsHub := websocket.NewMetricsHub(2 * time.Second) // پیش‌فرض هر 2s
-	go metricsHub.Run()                                    // مدیریت کلاینت‌های مانیتورینگ
-	go metricsHub.RunMetricsPublisher()                    // نشر دوره‌ای متریک‌ها
-	RegisterMetricsRoutes(authenticated, metricsHub)
-
 	// Posts Routes -> v1/post/*
 	RegisterPostRoutes(authenticated)
 
@@ -30,11 +24,16 @@ func RegisterRoutes(server *gin.Engine) {
 	//	Notifications
 	RegisterNotificationRoutes(authenticated)
 
-	// ---- WebSocket Chat ----
 	hub := websocket.NewHub()
 	go hub.Run()
 
-	// مسیر وب‌سوکت (فقط کاربر لاگین کرده می‌تونه وصل بشه)
+	// Message WS Route -> /v1/ws
 	RegisterMessageRoutes(authenticated, hub)
+
+	// --- Monitoring Hub ---
+	metricsHub := websocket.NewMetricsHub(2 * time.Second) // 2s
+	go metricsHub.Run()                                    // Running HUB
+	go metricsHub.RunMetricsPublisher()
+	RegisterMetricsRoutes(authenticated, metricsHub)
 
 }

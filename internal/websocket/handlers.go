@@ -12,10 +12,11 @@ import (
 	"time"
 )
 
+// Upgrader --> Change HTTP to WS
 var upgrader = websocket.Upgrader{
 	CheckOrigin: func(r *http.Request) bool {
 		return true
-	},
+	}, // need to check in production
 	ReadBufferSize:    1024,
 	WriteBufferSize:   1024,
 	EnableCompression: true,
@@ -42,6 +43,7 @@ func ServeWs(hub *Hub, c *gin.Context) {
 	go client.readPump(hub)
 }
 
+// readPump -> catch message from clients
 func (c *Client) readPump(hub *Hub) {
 	defer func() {
 		hub.Unregister <- c
@@ -55,6 +57,7 @@ func (c *Client) readPump(hub *Hub) {
 			break
 		}
 
+		// Here save messages in DB -> messages table
 		var msg models.Message
 		if err := json.Unmarshal(message, &msg); err != nil {
 			fmt.Println("❌ JSON Unmarshal failed:", err, "message:", string(message))
@@ -76,6 +79,7 @@ func (c *Client) readPump(hub *Hub) {
 	}
 }
 
+// writePump -> Send message to client
 func (c *Client) writePump() {
 	for {
 		select {
