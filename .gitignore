@@ -1,5 +1,6 @@
 # Ignore uploads folder (all files inside)
 uploads/
+logs/
 
 # Ignore the SQLite database file
 twitter.db
