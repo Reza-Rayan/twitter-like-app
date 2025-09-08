@@ -29,7 +29,7 @@ type Config struct {
 var AppConfig *Config
 
 func LoadConfig() {
-	viper.SetConfigName("config")
+	viper.SetConfigName("render")
 	viper.SetConfigType("yaml")
 	viper.AddConfigPath(".")
 
